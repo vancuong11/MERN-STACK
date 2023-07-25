@@ -1,5 +1,10 @@
+import SliderComponent from '../../components/SliderComponent/SliderComponent';
 import TypeProduct from '../../components/TypeProduct/TypeProduct';
 import './HomePage.scss';
+import slider1 from '../../../src/assets/images/slider1.png';
+import slider2 from '../../../src/assets/images/slider2.png';
+import slider3 from '../../../src/assets/images/slider3.png';
+
 function HomePage() {
     const arr = ['TV', 'Tủ Lạnh', 'Laptop', 'Điện Thoại'];
     return (
@@ -7,13 +12,15 @@ function HomePage() {
             <div className="wrapper-homepage">
                 {arr.map((index, item) => {
                     return (
-                        <div className="type-product">
-                            <TypeProduct name={item} key={index} />
+                        <div key={index} className="type-product">
+                            <TypeProduct name={item} />
                         </div>
                     );
                 })}
             </div>
-            Home Page
+            <div className="sliders">
+                <SliderComponent arrImages={[slider1, slider2, slider3]} />
+            </div>
         </div>
     );
 }

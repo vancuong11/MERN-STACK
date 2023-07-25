@@ -1,6 +1,8 @@
 .wrapper {
     padding         : 10px 120px;
     background-color: rgb(26, 148, 255);
+    gap             : 16px;
+    flex-wrap       : nowrap;
 
     .logo {
         font-size  : 18px;
@@ -24,6 +26,8 @@
         }
 
         .account {
+            white-space: nowrap;
+
             span {
                 font-size: 12px;
                 cursor   : pointer;

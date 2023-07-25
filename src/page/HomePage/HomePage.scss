@@ -1,15 +1,20 @@
 .container {
-    padding: 0 120px;
+
 
     .wrapper-homepage {
+        padding        : 0 120px;
         display        : flex;
         gap            : 16px;
         align-items    : center;
         justify-content: flex-start;
-        border         : 1px solid #333;
-        padding        : 5px;
+        height         : 44px;
 
-        .type-product {}
+
+    }
+
+    .sliders {
+        padding         : 0 120px;
+        background-color: #efefef;
     }
 
 
