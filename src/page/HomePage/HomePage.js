@@ -5,6 +5,7 @@ import slider1 from '../../../src/assets/images/slider1.png';
 import slider2 from '../../../src/assets/images/slider2.png';
 import slider3 from '../../../src/assets/images/slider3.png';
 import CardComponent from '../../components/CardComponent/CardComponent';
+import NavBarComponent from '../../components/NavbarComponent/NavBarComponent';
 
 function HomePage() {
     const arr = ['TV', 'Tủ Lạnh', 'Laptop', 'Điện Thoại'];
@@ -28,6 +29,7 @@ function HomePage() {
                     <CardComponent />
                 </div>
             </div>
+            <NavBarComponent />
         </>
     );
 }
