@@ -1,21 +1,23 @@
+.wrapper-homepage {
+    padding        : 0 120px;
+    display        : flex;
+    gap            : 16px;
+    align-items    : center;
+    justify-content: flex-start;
+    height         : 44px;
+
+
+}
+
 .container {
+    height          : 1000px;
+    padding         : 0 120px;
+    background-color: #efefef;
 
-
-    .wrapper-homepage {
-        padding        : 0 120px;
-        display        : flex;
-        gap            : 16px;
-        align-items    : center;
-        justify-content: flex-start;
-        height         : 44px;
-
-
+    .card-component {
+        margin-top : 20px;
+        display    : flex;
+        align-items: center;
+        gap        : 20px;
     }
-
-    .sliders {
-        padding         : 0 120px;
-        background-color: #efefef;
-    }
-
-
 }

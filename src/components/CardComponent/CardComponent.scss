@@ -1,0 +1,51 @@
+.card-style {
+    width: 200px;
+
+    img {
+        width : 200px;
+        height: 200px;
+    }
+
+    .content {
+        .name-product {
+            font-weight: 400;
+            font-size  : 16px;
+            line-height: 16px;
+            color      : rgb(56, 56, 61);
+        }
+
+        .report-text {
+            font-size  : 12px;
+            color      : rgb(128, 128, 137);
+            display    : flex;
+            align-items: center;
+            margin     : 8px 0 0px 0;
+
+            .icon-report {
+                font-size   : 14px;
+                color       : yellow;
+                margin-right: 12px;
+            }
+        }
+
+        .price {
+            color      : rgb(255, 66, 78);
+            font-size  : 16px;
+            font-weight: 500;
+        }
+
+        .discount {
+            color      : rgb(255, 66, 78);
+            font-size  : 12px;
+            font-weight: 500;
+        }
+    }
+
+    .card-logo {
+        width   : 68px;
+        height  : 20px;
+        position: absolute;
+        top     : 0;
+        left    : 0;
+    }
+}
