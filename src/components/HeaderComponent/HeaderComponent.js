@@ -1,9 +1,10 @@
 import React from 'react';
 import { Col, Row } from 'antd';
-
-import './HeaderComponent.scss';
 import Search from 'antd/es/input/Search';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+
+import './HeaderComponent.scss';
+import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 
 function HeaderComponent() {
     return (
@@ -13,9 +14,7 @@ function HeaderComponent() {
                     <div className="logo">VanCuong77</div>
                 </Col>
                 <Col span={12}>
-                    <div className="search">
-                        <Search placeholder="input search text" enterButton />
-                    </div>
+                    <ButtonInputSearch placeholder="Tìm kiếm" size="lagre" textButton="Tìm kiếm" />
                 </Col>
                 <Col span={6}>
                     <div className="profile">
