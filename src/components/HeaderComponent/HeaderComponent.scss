@@ -1,0 +1,60 @@
+.wrapper {
+    padding         : 10px 120px;
+    background-color: rgb(26, 148, 255);
+
+    .logo {
+        font-size  : 18px;
+        color      : #fff;
+        font-weight: bold;
+        text-align : left;
+    }
+
+    .profile {
+        display    : flex;
+        align-items: center;
+        color      : #fff;
+
+        .icon-account {
+            font-size: 25px;
+            padding  : 0 10px;
+        }
+
+        .account {
+            span {
+                font-size: 12px;
+                cursor   : pointer;
+
+                &:hover {
+                    opacity: 0.5;
+                }
+            }
+        }
+
+        .cart {
+            position   : relative;
+            text-align : center;
+            display    : flex;
+            align-items: center;
+            cursor     : pointer;
+
+            .icon-shopping-cart {
+                font-size: 25px;
+                padding  : 0 10px 0 20px;
+
+                .cart-count {
+                    position        : absolute;
+                    width           : 20px;
+                    height          : 20px;
+                    background-color: #e7d305;
+                    top             : -2px;
+                    left            : 36px;
+                    font-size       : 12px;
+                    border-radius   : 50%;
+                    line-height     : 20px;
+                    color           : #333;
+                    font-weight     : bold;
+                }
+            }
+        }
+    }
+}
