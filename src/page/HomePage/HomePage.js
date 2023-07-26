@@ -13,10 +13,10 @@ function HomePage() {
     return (
         <>
             <div className="wrapper-homepage">
-                {arr.map((index, item) => {
+                {arr.map((item) => {
                     return (
-                        <div key={index} className="type-product">
-                            <TypeProduct name={item} />
+                        <div className="type-product">
+                            <TypeProduct name={item} key={item} />
                         </div>
                     );
                 })}

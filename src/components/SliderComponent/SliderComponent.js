@@ -1,5 +1,6 @@
 import { Image } from 'antd';
 import Slider from 'react-slick';
+import './SliderComponent.scss';
 
 function SliderComponent(props) {
     const settings = {
@@ -13,7 +14,7 @@ function SliderComponent(props) {
     };
     const { arrImages } = props;
     return (
-        <Slider {...settings}>
+        <Slider {...settings} className="container-slider">
             {arrImages.map((image) => {
                 return (
                     <div key={image}>

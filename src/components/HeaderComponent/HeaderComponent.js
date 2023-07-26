@@ -10,10 +10,10 @@ function HeaderComponent() {
     return (
         <div>
             <Row className="wrapper">
-                <Col span={6}>
+                <Col span={5}>
                     <div className="logo">VanCuong77</div>
                 </Col>
-                <Col span={12}>
+                <Col span={13}>
                     <ButtonInputSearch placeholder="Tìm kiếm" size="lagre" textButton="Tìm kiếm" />
                 </Col>
                 <Col span={6}>

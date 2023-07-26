@@ -3,8 +3,11 @@ import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import InputForm from '../../components/InputForm/InputForm';
 import logo from '../../assets/images/logo-dn.png';
 import './SignUpPage.scss';
+import { useState } from 'react';
+import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 
 function SignUpPage() {
+    const [isShowPassword, setIsShowPassword] = useState(false);
     return (
         <div className="modal-container">
             <div className="container-sign-in">
@@ -14,8 +17,18 @@ function SignUpPage() {
                         <p>Đăng nhập hoặc Tạo tài khoản</p>
                     </div>
                     <InputForm placeholder="abc@gmail.com" style={{ marginBottom: '15px' }} />
-                    <InputForm placeholder="Password" style={{ marginBottom: '15px' }} />
-                    <InputForm placeholder="Confirm Password" />
+                    <div className="form-input">
+                        <span>{isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}</span>
+                        <InputForm
+                            placeholder="Password"
+                            type={isShowPassword ? 'text' : 'password'}
+                            style={{ marginBottom: '15px' }}
+                        />
+                    </div>
+                    <div className="form-input">
+                        <span>{isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}</span>
+                        <InputForm placeholder="Confirm Password" />
+                    </div>
                     <div className="group-button">
                         <ButtonComponent className="btn-submit-product" type="primary" danger textButton="Đăng Ký" />
                     </div>

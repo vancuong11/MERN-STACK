@@ -1,7 +1,11 @@
 .input-style {
-    border-top      : none;
-    border-right    : none;
-    border-left     : none;
-    outline         : none;
-    background-color: rgb(232, 240, 254);
+    border-top  : none;
+    border-right: none;
+    border-left : none;
+    outline     : none;
+
+    &:focus {
+
+        background-color: rgb(232, 240, 254);
+    }
 }
