@@ -43,17 +43,17 @@ function NavBarComponent() {
     };
 
     return (
-        <div className="container">
+        <div className="container-navbar">
             <div className="label-categories">
                 <label>Danh mục sản phẩm</label>
                 {renderContent('text', ['Tủ lạnh', 'TV', 'Máy giặt'])}
-                {renderContent('checkbox', [
+                {/* {renderContent('checkbox', [
                     { value: 'a', label: 'A' },
                     { value: 'b', label: 'B' },
                     { value: 'b', label: 'B' },
                 ])}
                 {renderContent('star', [3, 4, 5])}
-                {renderContent('price', ['dưới 40', 'trên 50'])}
+                {renderContent('price', ['dưới 40', 'trên 50'])} */}
             </div>
         </div>
     );

@@ -6,6 +6,7 @@ import slider2 from '../../../src/assets/images/slider2.png';
 import slider3 from '../../../src/assets/images/slider3.png';
 import CardComponent from '../../components/CardComponent/CardComponent';
 import NavBarComponent from '../../components/NavbarComponent/NavBarComponent';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 
 function HomePage() {
     const arr = ['TV', 'Tủ Lạnh', 'Laptop', 'Điện Thoại'];
@@ -21,15 +22,24 @@ function HomePage() {
                 })}
             </div>
             <div className="container">
-                <div className="sliders">
-                    <SliderComponent arrImages={[slider1, slider2, slider3]} />
-                </div>
+                <SliderComponent arrImages={[slider1, slider2, slider3]} />
 
                 <div className="card-component">
                     <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                    <CardComponent />
+                </div>
+                <div className="btn-see-more">
+                    <ButtonComponent textButton="Xem thêm" size="large" />
                 </div>
             </div>
-            <NavBarComponent />
         </>
     );
 }

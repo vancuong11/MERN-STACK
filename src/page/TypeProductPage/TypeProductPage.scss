@@ -1,0 +1,25 @@
+.container-type-product {
+    padding         : 10px 120px;
+    background-color: #efefef;
+
+
+    .left {
+        background   : #fff;
+        padding      : 10px;
+        margin-right : 10px;
+        border-radius: 6px;
+        height       : fit-content;
+    }
+
+    .right {
+        display        : flex;
+        justify-content: center;
+        gap            : 15px;
+        flex-wrap      : wrap;
+    }
+
+    .pagination {
+        text-align: center;
+        margin    : 10px 0;
+    }
+}
