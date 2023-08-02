@@ -15,8 +15,8 @@ function HomePage() {
             <div className="wrapper-homepage">
                 {arr.map((item) => {
                     return (
-                        <div className="type-product">
-                            <TypeProduct name={item} key={item} />
+                        <div className="type-product" key={item}>
+                            <TypeProduct name={item} />
                         </div>
                     );
                 })}
