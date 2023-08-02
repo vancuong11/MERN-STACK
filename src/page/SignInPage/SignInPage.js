@@ -1,12 +1,15 @@
 import { Image } from 'antd';
+import { useState } from 'react';
+import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import InputForm from '../../components/InputForm/InputForm';
 import logo from '../../assets/images/logo-dn.png';
+import * as userService from '../../services/userService';
+import { useMutationHooks } from '../../hooks/useMutationHook';
 import './SignInPage.scss';
-import { useState } from 'react';
-import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/LoadingComponent/Loading';
 
 function SignInPage() {
     const [isShowPassword, setIsShowPassword] = useState(false);
@@ -17,6 +20,8 @@ function SignInPage() {
     const handleNavigateSignUp = () => {
         navigate('/sign-up');
     };
+    const mutation = useMutationHooks((data) => userService.loginUser(data));
+    const { data, isLoading } = mutation;
 
     const handleOnChangeEmail = (value) => {
         setEmail(value);
@@ -27,7 +32,10 @@ function SignInPage() {
     };
 
     const handleSignIn = () => {
-        console.log(email, password);
+        mutation.mutate({
+            email,
+            password,
+        });
     };
 
     return (
@@ -55,16 +63,19 @@ function SignInPage() {
                             type={isShowPassword ? 'text' : 'password'}
                         />
                     </div>
-                    <div className="group-button">
-                        <ButtonComponent
-                            disabled={!email.length || !password.length}
-                            onClick={handleSignIn}
-                            className="btn-submit-product"
-                            type="primary"
-                            danger
-                            textButton="Đăng nhập"
-                        />
-                    </div>
+                    {data?.status === 'ERROR' && <span style={{ color: 'red' }}>{data?.message}</span>}
+                    <Loading isLoading={isLoading}>
+                        <div className="group-button">
+                            <ButtonComponent
+                                disabled={!email.length || !password.length}
+                                onClick={handleSignIn}
+                                className="btn-submit-product"
+                                type="primary"
+                                danger
+                                textButton="Đăng nhập"
+                            />
+                        </div>
+                    </Loading>
                     {/* <p className="login-with-email">Đăng nhập bằng email</p> */}
                     <p className="forgot-password">Quên mật khẩu</p>
                     <p>

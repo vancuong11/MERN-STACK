@@ -1,11 +1,15 @@
 import { Image } from 'antd';
-import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import InputForm from '../../components/InputForm/InputForm';
-import logo from '../../assets/images/logo-dn.png';
-import './SignUpPage.scss';
 import { useState } from 'react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+
+import * as userService from '../../services/userService';
+import { useMutationHooks } from '../../hooks/useMutationHook';
+import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
+import InputForm from '../../components/InputForm/InputForm';
+import logo from '../../assets/images/logo-dn.png';
+import Loading from '../../components/LoadingComponent/Loading';
+import './SignUpPage.scss';
 
 function SignUpPage() {
     const [isShowPassword, setIsShowPassword] = useState(false);
@@ -18,6 +22,8 @@ function SignUpPage() {
     const handleNavigateSignIn = () => {
         navigate('/sign-in');
     };
+    const mutation = useMutationHooks((data) => userService.signUpUser(data));
+    const { data, isLoading } = mutation;
 
     const handleOnChangeEmail = (value) => {
         setEmail(value);
@@ -31,7 +37,11 @@ function SignUpPage() {
     };
 
     const handleSignUp = () => {
-        console.log(email, password, confirmPassword);
+        mutation.mutate({
+            email,
+            password,
+            confirmPassword,
+        });
     };
     return (
         <div className="modal-container">
@@ -70,16 +80,19 @@ function SignUpPage() {
                             type={isShowConfirmPassword ? 'text' : 'password'}
                         />
                     </div>
-                    <div className="group-button">
-                        <ButtonComponent
-                            disabled={!email.length || !password.length || !confirmPassword.length}
-                            onClick={handleSignUp}
-                            className="btn-submit-product"
-                            type="primary"
-                            danger
-                            textButton="Đăng Ký"
-                        />
-                    </div>
+                    {data?.status === 'ERROR' && <span style={{ color: 'red' }}>{data?.message}</span>}
+                    <Loading isLoading={isLoading}>
+                        <div className="group-button">
+                            <ButtonComponent
+                                disabled={!email.length || !password.length || !confirmPassword.length}
+                                onClick={handleSignUp}
+                                className="btn-submit-product"
+                                type="primary"
+                                danger
+                                textButton="Đăng Ký"
+                            />
+                        </div>
+                    </Loading>
                     {/* <p className="login-with-email">Đăng nhập bằng email</p> */}
                     <p className="forgot-password">Quên mật khẩu</p>
                     <p>
