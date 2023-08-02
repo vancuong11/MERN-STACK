@@ -5,8 +5,15 @@ import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-desi
 
 import './HeaderComponent.scss';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
+import { useNavigate } from 'react-router-dom';
 
 function HeaderComponent() {
+    const navigate = useNavigate();
+
+    const handleNavigateLogin = () => {
+        navigate('/sign-in');
+    };
+
     return (
         <div>
             <Row className="wrapper">
@@ -22,7 +29,7 @@ function HeaderComponent() {
                             <UserOutlined />
                         </div>
                         <div className="account">
-                            <span>Đăng nhập/ Đăng ký</span>
+                            <span onClick={() => handleNavigateLogin()}>Đăng nhập/ Đăng ký</span>
                             <div>
                                 <span>Tài khoản</span>
                                 <CaretDownOutlined />

@@ -4,11 +4,19 @@ import { useState } from 'react';
 import './InputForm.scss';
 
 function InputForm(props) {
-    const [valueInput, setValueInput] = useState('');
     const { placeholder, ...rests } = props;
+    const handleOnChangeInput = (e) => {
+        props.onChange(e.target.value);
+    };
     return (
         <div>
-            <Input className="input-style" placeholder={placeholder} value={valueInput} {...rests} />
+            <Input
+                className="input-style"
+                placeholder={placeholder}
+                value={props.value}
+                {...rests}
+                onChange={(e) => handleOnChangeInput(e)}
+            />
         </div>
     );
 }

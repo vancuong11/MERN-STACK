@@ -3,15 +3,18 @@ import { routes } from './routes';
 import DefaultComponent from './components/DefautComponent/DefaulComponent';
 import { Fragment, useEffect } from 'react';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 function App() {
-    useEffect(() => {
-        fetchApi();
-    }, []);
+    // useEffect(() => {
+    //     fetchApi();
+    // }, []);
 
     const fetchApi = async () => {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all`);
+        return res.data;
     };
+    const query = useQuery({ queryKey: ['todos'], queryFn: fetchApi });
 
     return (
         <>
