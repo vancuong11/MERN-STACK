@@ -1,5 +1,5 @@
 import { Image } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ import InputForm from '../../components/InputForm/InputForm';
 import logo from '../../assets/images/logo-dn.png';
 import Loading from '../../components/LoadingComponent/Loading';
 import './SignUpPage.scss';
+import * as message from '../../components/Message/Message';
 
 function SignUpPage() {
     const [isShowPassword, setIsShowPassword] = useState(false);
@@ -23,7 +24,15 @@ function SignUpPage() {
         navigate('/sign-in');
     };
     const mutation = useMutationHooks((data) => userService.signUpUser(data));
-    const { data, isLoading } = mutation;
+    const { data, isLoading, isError, isSuccess } = mutation;
+    useEffect(() => {
+        if (isSuccess) {
+            message.success();
+            navigate('/sign-in');
+        } else if (isError) {
+            message.error();
+        }
+    }, [isError, isSuccess]);
 
     const handleOnChangeEmail = (value) => {
         setEmail(value);

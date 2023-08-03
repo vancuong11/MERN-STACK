@@ -6,8 +6,10 @@ import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-desi
 import './HeaderComponent.scss';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function HeaderComponent() {
+    const user = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     const handleNavigateLogin = () => {
@@ -28,13 +30,18 @@ function HeaderComponent() {
                         <div className="icon-account">
                             <UserOutlined />
                         </div>
-                        <div className="account">
-                            <span onClick={() => handleNavigateLogin()}>Đăng nhập/ Đăng ký</span>
-                            <div>
-                                <span>Tài khoản</span>
-                                <CaretDownOutlined />
+                        {user.name ? (
+                            <span>{user.name}</span>
+                        ) : (
+                            <div className="account">
+                                <span onClick={() => handleNavigateLogin()}>Đăng nhập/ Đăng ký</span>
+                                <div>
+                                    <span>Tài khoản</span>
+                                    <CaretDownOutlined />
+                                </div>
                             </div>
-                        </div>
+                        )}
+
                         <div className="cart">
                             <div className="icon-shopping-cart">
                                 <ShoppingCartOutlined />
