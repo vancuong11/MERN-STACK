@@ -1,20 +1,40 @@
-import React from 'react';
-import { Badge, Col, Row } from 'antd';
-import Search from 'antd/es/input/Search';
+import React, { useState } from 'react';
+import { Col, Popover, Row } from 'antd';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import * as userService from '../../services/userService';
 
 import './HeaderComponent.scss';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetUser } from '../../redux/slices/userSlide';
+import Loading from '../LoadingComponent/Loading';
 
 function HeaderComponent() {
     const user = useSelector((state) => state.user);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
 
     const handleNavigateLogin = () => {
         navigate('/sign-in');
     };
+
+    const handleLogout = async () => {
+        setLoading(true);
+        await userService.logoutUser();
+        localStorage.removeItem('access_token');
+        dispatch(resetUser());
+        setLoading(false);
+    };
+
+    const content = (
+        <div className="content-infor-user">
+            <p onClick={handleLogout}>Đăng xuất</p>
+            <p>Thông tin tài khoản</p>
+        </div>
+    );
 
     return (
         <div>
@@ -30,17 +50,23 @@ function HeaderComponent() {
                         <div className="icon-account">
                             <UserOutlined />
                         </div>
-                        {user.name ? (
-                            <span>{user.name}</span>
-                        ) : (
-                            <div className="account">
-                                <span onClick={() => handleNavigateLogin()}>Đăng nhập/ Đăng ký</span>
-                                <div>
-                                    <span>Tài khoản</span>
-                                    <CaretDownOutlined />
+                        <Loading isLoading={loading}>
+                            {user.name ? (
+                                <>
+                                    <Popover placement="bottom" title="title" content={content} trigger="click">
+                                        <span className="infor-user">{user.name}</span>
+                                    </Popover>
+                                </>
+                            ) : (
+                                <div className="account">
+                                    <span onClick={() => handleNavigateLogin()}>Đăng nhập/ Đăng ký</span>
+                                    <div>
+                                        <span>Tài khoản</span>
+                                        <CaretDownOutlined />
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </Loading>
 
                         <div className="cart">
                             <div className="icon-shopping-cart">

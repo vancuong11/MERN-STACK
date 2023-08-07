@@ -25,6 +25,11 @@
             padding  : 0 10px;
         }
 
+        .infor-user {
+            cursor: pointer;
+        }
+
+
         .account {
             white-space: nowrap;
 
@@ -64,5 +69,18 @@
                 }
             }
         }
+    }
+}
+
+.content-infor-user {
+    cursor: pointer;
+
+    p {
+        &:hover {
+            width     : 100%;
+            background: rgb(26, 148, 255);
+            color     : #fff;
+        }
+
     }
 }
