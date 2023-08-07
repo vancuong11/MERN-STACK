@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Popover, Row } from 'antd';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import * as userService from '../../services/userService';
@@ -13,12 +13,18 @@ import Loading from '../LoadingComponent/Loading';
 function HeaderComponent() {
     const user = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
+    const [avatar, setAvatar] = useState();
+    const [userName, setUserName] = useState('');
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
     const handleNavigateLogin = () => {
         navigate('/sign-in');
+    };
+
+    const handleNavigateProfile = () => {
+        navigate('/profile-user');
     };
 
     const handleLogout = async () => {
@@ -29,18 +35,31 @@ function HeaderComponent() {
         setLoading(false);
     };
 
+    useEffect(() => {
+        setLoading(true);
+        setUserName(user.name);
+        setAvatar(user.avatar);
+        setLoading(false);
+    }, [user.name, user.avatar]);
+
     const content = (
         <div className="content-infor-user">
             <p onClick={handleLogout}>Đăng xuất</p>
-            <p>Thông tin tài khoản</p>
+            <p onClick={handleNavigateProfile}>Thông tin tài khoản</p>
         </div>
     );
+
+    const handleHome = () => {
+        navigate('/');
+    };
 
     return (
         <div>
             <Row className="wrapper">
                 <Col span={5}>
-                    <div className="logo">VanCuong77</div>
+                    <div className="logo" onClick={handleHome}>
+                        VanCuong77
+                    </div>
                 </Col>
                 <Col span={13}>
                     <ButtonInputSearch placeholder="Tìm kiếm" size="lagre" textButton="Tìm kiếm" />
@@ -48,13 +67,26 @@ function HeaderComponent() {
                 <Col span={6}>
                     <div className="profile">
                         <div className="icon-account">
-                            <UserOutlined />
+                            {avatar ? (
+                                <img
+                                    src={avatar}
+                                    style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        borderRadius: '50%',
+                                    }}
+                                />
+                            ) : (
+                                <UserOutlined />
+                            )}
                         </div>
                         <Loading isLoading={loading}>
-                            {user.name ? (
+                            {user.access_token ? (
                                 <>
                                     <Popover placement="bottom" title="title" content={content} trigger="click">
-                                        <span className="infor-user">{user.name}</span>
+                                        <span className="infor-user">
+                                            {userName.length > 0 ? userName : user.email}
+                                        </span>
                                     </Popover>
                                 </>
                             ) : (

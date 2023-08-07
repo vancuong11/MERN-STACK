@@ -9,6 +9,7 @@
         color      : #fff;
         font-weight: bold;
         text-align : left;
+        cursor     : pointer;
     }
 
     .search {
@@ -77,9 +78,8 @@
 
     p {
         &:hover {
-            width     : 100%;
-            background: rgb(26, 148, 255);
-            color     : #fff;
+            width: 100%;
+            color: rgb(26, 148, 255);
         }
 
     }
