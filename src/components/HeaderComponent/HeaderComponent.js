@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetUser } from '../../redux/slices/userSlide';
 import Loading from '../LoadingComponent/Loading';
 
-function HeaderComponent() {
+function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const user = useSelector((state) => state.user);
     const [loading, setLoading] = useState(false);
     const [avatar, setAvatar] = useState();
@@ -25,6 +25,10 @@ function HeaderComponent() {
 
     const handleNavigateProfile = () => {
         navigate('/profile-user');
+    };
+
+    const handleNavigateAdmin = () => {
+        navigate('/system/admin');
     };
 
     const handleLogout = async () => {
@@ -44,8 +48,9 @@ function HeaderComponent() {
 
     const content = (
         <div className="content-infor-user">
-            <p onClick={handleLogout}>Đăng xuất</p>
             <p onClick={handleNavigateProfile}>Thông tin tài khoản</p>
+            {user.isAdmin && <p onClick={handleNavigateAdmin}>Quản lí hệ thống</p>}
+            <p onClick={handleLogout}>Đăng xuất</p>
         </div>
     );
 
@@ -55,15 +60,21 @@ function HeaderComponent() {
 
     return (
         <div>
-            <Row className="wrapper">
+            <Row
+                className="wrapper"
+                style={{ justifyContent: isHiddenSearch && isHiddenCart ? 'space-between' : 'unset' }}
+            >
                 <Col span={5}>
                     <div className="logo" onClick={handleHome}>
                         VanCuong77
                     </div>
                 </Col>
-                <Col span={13}>
-                    <ButtonInputSearch placeholder="Tìm kiếm" size="lagre" textButton="Tìm kiếm" />
-                </Col>
+                {!isHiddenSearch && (
+                    <Col span={13}>
+                        <ButtonInputSearch placeholder="Tìm kiếm" size="lagre" textButton="Tìm kiếm" />
+                    </Col>
+                )}
+
                 <Col span={6}>
                     <div className="profile">
                         <div className="icon-account">
@@ -83,7 +94,7 @@ function HeaderComponent() {
                         <Loading isLoading={loading}>
                             {user.access_token ? (
                                 <>
-                                    <Popover placement="bottom" title="title" content={content} trigger="click">
+                                    <Popover placement="bottom" content={content} trigger="click">
                                         <span className="infor-user">
                                             {userName.length > 0 ? userName : user.email}
                                         </span>
@@ -100,13 +111,15 @@ function HeaderComponent() {
                             )}
                         </Loading>
 
-                        <div className="cart">
-                            <div className="icon-shopping-cart">
-                                <ShoppingCartOutlined />
-                                <span className="cart-count">0</span>
+                        {!isHiddenCart && (
+                            <div className="cart">
+                                <div className="icon-shopping-cart">
+                                    <ShoppingCartOutlined />
+                                    <span className="cart-count">0</span>
+                                </div>
+                                <div>Giỏ hàng</div>
                             </div>
-                            <div>Giỏ hàng</div>
-                        </div>
+                        )}
                     </div>
                 </Col>
             </Row>

@@ -3,7 +3,8 @@ import { StarFilled } from '@ant-design/icons';
 import './CardComponent.scss';
 import logo from '../../assets/images/logo.png';
 
-function CardComponent() {
+function CardComponent(props) {
+    const { item } = props;
     return (
         <Card
             className="card-style"
@@ -16,17 +17,17 @@ function CardComponent() {
         >
             <img src={logo} className="card-logo" />
             <div className="content">
-                <div className="name-product">Iphone</div>
+                <div className="name-product">{item.name}</div>
                 <div className="report-text">
                     <span>
-                        <span> 4.96</span>
+                        <span>{item.rating} </span>
                         <StarFilled className="icon-report" />
                     </span>
-                    <span>| Đã bán 1000+</span>
+                    <span>| {item.selled}</span>
                 </div>
                 <div className="price">
-                    1.000.000
-                    <span className="discount">-6%</span>
+                    {item.price} VND
+                    <span className="discount">{item.discount || 5}%</span>
                 </div>
             </div>
         </Card>

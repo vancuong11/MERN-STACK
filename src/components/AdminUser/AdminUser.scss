@@ -1,0 +1,24 @@
+.admin-user-container {
+    .admin-user {
+        h1 {
+            font-size: 14px;
+            color    : #000;
+        }
+    }
+
+    .btn-add {
+        margin-top   : 10px;
+        width        : 150px;
+        height       : 150px;
+        border-radius: 6px;
+        border-style : dashed;
+
+        .icon-add {
+            font-size: 60px;
+        }
+    }
+
+    .admin-table {
+        margin-top: 20px;
+    }
+}
