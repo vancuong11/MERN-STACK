@@ -432,7 +432,13 @@ function AdminProduct() {
                 />
             </div>
 
-            <ModalComponent title="Tạo mới sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
+            <ModalComponent
+                forceRender
+                title="Tạo mới sản phẩm"
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={null}
+            >
                 <Loading isLoading={isLoading}>
                     <Form
                         form={form}
@@ -582,6 +588,7 @@ function AdminProduct() {
             </ModalComponent>
 
             <DrawerComponent
+                forceRender
                 title="Chi tiết sản phẩm"
                 isOpen={isOpenDrawer}
                 onClose={() => setIsOpenDrawer(false)}
