@@ -98,7 +98,7 @@ function AdminProduct() {
         }
     }, [isSuccess, isError]);
 
-    const onFinish = () => {
+    const createProductData = () => {
         mutation.mutate(stateProduct, {
             onSettled: () => {
                 queryProduct.refetch();
@@ -149,11 +149,11 @@ function AdminProduct() {
     }, [form, stateProductDetail]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true);
             fetchGetDetailProduct(rowSelected);
         }
-    }, [rowSelected]);
+    }, [rowSelected, isOpenDrawer]);
 
     const handleDetailsProduct = () => {
         setIsOpenDrawer(true);
@@ -241,6 +241,40 @@ function AdminProduct() {
     const handleCancelDelete = () => {
         setIsModalOpenDelete(false);
     };
+
+    // ---------------delete many products ---------------
+    const mutationDeletedMany = useMutationHooks((data) => {
+        const { token, ...id } = data;
+        const res = productService.deleteManyProduct(id, token);
+        return res;
+    });
+
+    const handleDeleteManyProduct = (id) => {
+        mutationDeletedMany.mutate(
+            { id: id, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryProduct.refetch();
+                },
+            },
+        );
+    };
+    const {
+        data: dataManyDeleted,
+        isLoading: isLoadingManyDeleted,
+        isSuccess: isSuccessManyDeleted,
+        isError: isErrorManyDeleted,
+    } = mutationDeletedMany;
+
+    useEffect(() => {
+        if (isSuccessManyDeleted && dataManyDeleted?.status === 'OK') {
+            message.success('Delete Product Success');
+        } else if (isErrorManyDeleted) {
+            message.error('Delete Product Error');
+        }
+    }, [isSuccessManyDeleted, isErrorManyDeleted]);
+
+    // ---------------end delete many products------------------------
 
     // column & data table
     const renderAction = () => {
@@ -419,6 +453,7 @@ function AdminProduct() {
 
             <div className="admin-table">
                 <TableComponent
+                    handleDeleteMany={handleDeleteManyProduct}
                     data={dataTable}
                     isLoading={isLoadingProduct}
                     columns={columns}
@@ -455,7 +490,7 @@ function AdminProduct() {
                         initialValues={{
                             remember: true,
                         }}
-                        onFinish={onFinish}
+                        onFinish={createProductData}
                         autoComplete="off"
                     >
                         <Form.Item
@@ -468,7 +503,7 @@ function AdminProduct() {
                                 },
                             ]}
                         >
-                            <InputComponent value={stateProduct.name} onChange={handleOnchange} name="name" />
+                            <InputComponent value={stateProduct['name']} onChange={handleOnchange} name="name" />
                         </Form.Item>
 
                         <Form.Item
@@ -621,7 +656,7 @@ function AdminProduct() {
                             ]}
                         >
                             <InputComponent
-                                value={stateProductDetail.name}
+                                value={stateProductDetail['name']}
                                 onChange={handleOnchangeDetail}
                                 name="name"
                             />
@@ -638,7 +673,7 @@ function AdminProduct() {
                             ]}
                         >
                             <InputComponent
-                                value={stateProductDetail.type}
+                                value={stateProductDetail['type']}
                                 onChange={handleOnchangeDetail}
                                 name="type"
                             />

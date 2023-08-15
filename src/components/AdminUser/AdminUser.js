@@ -100,10 +100,10 @@ function AdminUser() {
 
     useEffect(() => {
         if (isSuccessUpdated && dataUpdated.status === 'OK') {
-            message.success('Update product successfully');
+            message.success('Update User successfully');
             handleCloseDrawer();
         } else if (isErrorUpdated) {
-            message.error('Update product error');
+            message.error('Update User error');
         }
     }, [isSuccessUpdated, isErrorUpdated]);
 
@@ -175,16 +175,50 @@ function AdminUser() {
 
     useEffect(() => {
         if (isSuccessDeleted && dataDeleted?.status === 'OK') {
-            message.success('Delete Product Success');
+            message.success('Delete User Success');
             handleCancelDelete();
         } else if (isErrorDeleted) {
-            message.error('Delete Product Error');
+            message.error('Delete User Error');
         }
     }, [isSuccessDeleted]);
 
     const handleCancelDelete = () => {
         setIsModalOpenDelete(false);
     };
+    // end delete user ------------------------
+
+    // -----delete many users------------------------
+    const mutationDeletedMany = useMutationHooks((data) => {
+        const { token, ...id } = data;
+        const res = userService.deleteManyUser(id, token);
+        return res;
+    });
+
+    const {
+        data: dataDeletedMany,
+        isLoading: isLoadingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeleted;
+
+    const handleDeleteManyUser = (id) => {
+        mutationDeleted.mutate(
+            { id: id, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryUser.refetch();
+                },
+            },
+        );
+    };
+
+    useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.success('Delete User Success');
+        } else if (isErrorDeleted) {
+            message.error('Delete User Error');
+        }
+    }, [isErrorDeletedMany, isSuccessDeletedMany]);
     // end delete user ------------------------
 
     // edit user ------------------------
@@ -207,11 +241,11 @@ function AdminUser() {
     }, [form, stateUserDetails]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true);
             fetchGetDetailUser(rowSelected);
         }
-    }, [rowSelected]);
+    }, [rowSelected, isOpenDrawer]);
 
     const handleDetailsUser = () => {
         setIsOpenDrawer(true);
@@ -387,6 +421,7 @@ function AdminUser() {
             </div>
             <div className="admin-table">
                 <TableComponent
+                    handleDeleteMany={handleDeleteManyUser}
                     data={dataTable}
                     isLoading={isLoadingUser}
                     columns={columns}
