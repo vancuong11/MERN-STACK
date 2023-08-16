@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetUser } from '../../redux/slices/userSlide';
 import Loading from '../LoadingComponent/Loading';
+import { searchProduct } from '../../redux/slices/productSlide';
 
 function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const user = useSelector((state) => state.user);
@@ -16,6 +17,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const [avatar, setAvatar] = useState();
     const [userName, setUserName] = useState('');
     const navigate = useNavigate();
+    const [search, setSearch] = useState('');
 
     const dispatch = useDispatch();
 
@@ -58,6 +60,10 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         navigate('/');
     };
 
+    const onSearch = (e) => {
+        setSearch(e.target.value);
+        dispatch(searchProduct(e.target.value));
+    };
     return (
         <div>
             <Row
@@ -71,7 +77,12 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                 </Col>
                 {!isHiddenSearch && (
                     <Col span={13}>
-                        <ButtonInputSearch placeholder="Tìm kiếm" size="lagre" textButton="Tìm kiếm" />
+                        <ButtonInputSearch
+                            placeholder="Tìm kiếm"
+                            size="lagre"
+                            textButton="Tìm kiếm"
+                            onChange={onSearch}
+                        />
                     </Col>
                 )}
 

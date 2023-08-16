@@ -46,7 +46,6 @@ function TableComponent(props) {
         filename: fileName,
         sheet: 'Sheet',
     });
-    console.log(fileName);
     return (
         <div>
             <Loading isLoading={isLoading}>
