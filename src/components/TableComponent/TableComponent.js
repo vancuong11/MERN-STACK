@@ -1,7 +1,7 @@
 import { Divider, Dropdown, Radio, Space, Table } from 'antd';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Loading from '../LoadingComponent/Loading';
-import { DownOutlined, SmileOutlined } from '@ant-design/icons';
+import { DownloadTableExcel } from 'react-export-table-to-excel';
 import './TableComponent.scss';
 
 function TableComponent(props) {
@@ -22,6 +22,7 @@ function TableComponent(props) {
     const handleDeleteAll = () => {
         handleDeleteMany(rowSelectedKeys);
     };
+    const tableRef = useRef(null);
     return (
         <div>
             <Loading isLoading={isLoading}>
@@ -31,7 +32,12 @@ function TableComponent(props) {
                     </div>
                 )}
 
+                <DownloadTableExcel filename="Table Excel" sheet="Sheet" currentTableRef={tableRef.current}>
+                    <button> Export excel </button>
+                </DownloadTableExcel>
+
                 <Table
+                    ref={tableRef}
                     rowSelection={{
                         type: selectionType,
                         ...rowSelection,

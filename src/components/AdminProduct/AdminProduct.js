@@ -623,7 +623,6 @@ function AdminProduct() {
             </ModalComponent>
 
             <DrawerComponent
-                forceRender
                 title="Chi tiết sản phẩm"
                 isOpen={isOpenDrawer}
                 onClose={() => setIsOpenDrawer(false)}

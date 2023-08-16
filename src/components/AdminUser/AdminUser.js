@@ -366,12 +366,12 @@ function AdminUser() {
             sorter: (a, b) => a.email.length - b.email.length,
             ...getColumnSearchProps('email'),
         },
-        // {
-        //     title: 'Address',
-        //     dataIndex: 'address',
-        //     sorter: (a, b) => a.address.length - b.address.length,
-        //     ...getColumnSearchProps('address'),
-        // },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            sorter: (a, b) => a.address.length - b.address.length,
+            ...getColumnSearchProps('address'),
+        },
         {
             title: 'Admin',
             dataIndex: 'isAdmin',
