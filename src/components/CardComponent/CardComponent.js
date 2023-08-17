@@ -2,12 +2,19 @@ import { Card, Image } from 'antd';
 import { StarFilled } from '@ant-design/icons';
 import './CardComponent.scss';
 import logo from '../../assets/images/logo.png';
+import { useNavigate } from 'react-router-dom';
 
 function CardComponent(props) {
     const { item } = props;
+    const navigate = useNavigate();
+    const handleDetailsProduct = () => {
+        const id = item._id;
+        navigate(`/product-detail/${id}`);
+    };
     return (
         <Card
             className="card-style"
+            onClick={handleDetailsProduct}
             hoverable
             style={{
                 width: 200,

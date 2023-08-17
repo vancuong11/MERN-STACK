@@ -43,7 +43,6 @@ function HomePage() {
         retryDelay: 1000,
         keepPreviousData: true,
     });
-    console.log(products, isPreviousData);
 
     return (
         <Loading isLoading={isLoading || loading}>

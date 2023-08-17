@@ -25,6 +25,8 @@
     }
 
     .description-product-detail {
+        padding-left: 16px;
+
         .title {
             color      : rgb(36, 36, 36);
             font-size  : 24px;
@@ -34,17 +36,19 @@
         }
 
         .star-report {
-            span {
+            .icon-report {
+                font-size   : 14px;
+                color       : #fadb14;
+                margin-right: 12px;
+            }
+
+            .sell {
                 font-size  : 15px;
                 line-height: 24px;
                 color      : rgb(120, 120, 120);
             }
 
-            .icon-report {
-                font-size   : 14px;
-                color       : rgb(253, 216, 54);
-                margin-right: 12px;
-            }
+
         }
 
         .price {
