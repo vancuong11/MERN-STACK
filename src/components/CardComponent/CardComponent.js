@@ -13,7 +13,7 @@ function CardComponent(props) {
                 width: 200,
             }}
             bodyStyle={{ padding: '10px' }}
-            cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
+            cover={<img alt="example" src={item.image} />}
         >
             <img src={logo} className="card-logo" />
             <div className="content">
@@ -23,11 +23,11 @@ function CardComponent(props) {
                         <span>{item.rating} </span>
                         <StarFilled className="icon-report" />
                     </span>
-                    <span>| {item.selled}</span>
+                    <span>| Đã bán {item.selled || 1000}+</span>
                 </div>
                 <div className="price">
-                    {item.price} VND
-                    <span className="discount">{item.discount || 5}%</span>
+                    {item.price.toLocaleString()} VND
+                    <span className="discount"> - {item.discount || 5}%</span>
                 </div>
             </div>
         </Card>

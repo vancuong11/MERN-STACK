@@ -16,39 +16,35 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 function HomePage() {
     const arr = ['TV', 'Tủ Lạnh', 'Laptop', 'Điện Thoại'];
-    const [products, setProducts] = useState([]);
     const [stateProduct, setStateProduct] = useState([]);
     const [loading, setLoading] = useState(false);
     const refSearch = useRef(false);
+    const [limit, setLimit] = useState(6);
 
     const searchProduct = useSelector((state) => state.product.search);
     const searchDebounce = useDebounce(searchProduct, 1000);
 
-    const fetchProductAll = async (search) => {
-        const res = await productService.getAllProduct(search);
-        if (search.length > 0 || refSearch.current) {
-            setProducts(res.data);
-        } else {
-            return res;
+    const fetchProductAll = async (context) => {
+        const limit = context.queryKey && context.queryKey[1];
+        if (!limit) {
+            return undefined;
         }
-        setProducts(res.data);
+        const search = context.queryKey && context.queryKey[2];
+        const res = await productService.getAllProduct(search, limit);
+        return res;
     };
 
-    useEffect(() => {
-        if (refSearch.current) {
-            setLoading(true);
-            fetchProductAll(searchDebounce);
-        }
-        refSearch.current = true;
-        setLoading(false);
-    }, [searchDebounce]);
+    const {
+        isLoading,
+        data: products,
+        isPreviousData,
+    } = useQuery(['products', limit, searchDebounce], fetchProductAll, {
+        retry: 3,
+        retryDelay: 1000,
+        keepPreviousData: true,
+    });
+    console.log(products, isPreviousData);
 
-    const { isLoading, data: product } = useQuery(['products'], fetchProductAll, { retry: 3, retryDelay: 1000 });
-    useEffect(() => {
-        if (product?.length > 0) {
-            setStateProduct(product);
-        }
-    }, [product]);
     return (
         <Loading isLoading={isLoading || loading}>
             <div className="wrapper-homepage">
@@ -64,13 +60,17 @@ function HomePage() {
                 <SliderComponent arrImages={[slider1, slider2, slider3]} />
 
                 <div className="card-component">
-                    {products.length > 0 &&
-                        products.map((product) => {
-                            return <CardComponent key={product._id} item={product} />;
-                        })}
+                    {products?.data?.map((product) => {
+                        return <CardComponent key={product._id} item={product} />;
+                    })}
                 </div>
                 <div className="btn-see-more">
-                    <ButtonComponent textButton="Xem thêm" size="large" />
+                    <ButtonComponent
+                        textButton={isPreviousData ? 'Load more' : 'Xem thêm'}
+                        size="large"
+                        onClick={() => setLimit((prev) => prev + 6)}
+                        disabled={products?.total === products?.data?.length || products?.totalPage === 1}
+                    />
                 </div>
             </div>
         </Loading>
