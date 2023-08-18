@@ -1,10 +1,10 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Space, Upload } from 'antd';
+import { Button, Form, Input, Modal, Select, Space, Upload } from 'antd';
 import TableComponent from '../TableComponent/TableComponent';
 import './AdminProduct.scss';
 import { useEffect, useRef, useState } from 'react';
 import InputComponent from '../InputComponent/InputComponent';
-import { getBase64 } from '../../utils';
+import { getBase64, renderOptions } from '../../utils';
 import { useMutationHooks } from '../../hooks/useMutationHook';
 import * as productService from '../../services/productService';
 import Loading from '../LoadingComponent/Loading';
@@ -23,6 +23,7 @@ function AdminProduct() {
     const user = useSelector((state) => state.user);
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
+    const [typeSelect, setTypeSelect] = useState('');
     const [stateProduct, setStateProduct] = useState({
         name: '',
         price: '',
@@ -31,6 +32,7 @@ function AdminProduct() {
         image: '',
         countInStock: '',
         type: '',
+        newType: '',
     });
 
     const [stateProductDetail, setStateProductDetail] = useState({
@@ -99,7 +101,17 @@ function AdminProduct() {
     }, [isSuccess, isError]);
 
     const createProductData = () => {
-        mutation.mutate(stateProduct, {
+        const params = {
+            name: stateProduct.name,
+            price: stateProduct.price,
+            description: stateProduct.description,
+            rating: stateProduct.rating,
+            image: stateProduct.image,
+            type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
+            countInStock: stateProduct.countInStock,
+            // discount: stateProduct.discount
+        };
+        mutation.mutate(params, {
             onSettled: () => {
                 queryProduct.refetch();
             },
@@ -440,6 +452,21 @@ function AdminProduct() {
         products?.map((product) => {
             return { ...product, key: product._id };
         });
+    // ----------- type product-------------
+
+    const fetchAllTypeProduct = async () => {
+        const res = await productService.getAllTypeProduct();
+        return res;
+    };
+
+    const queryTypeProduct = useQuery({ queryKey: ['type-product'], queryFn: fetchAllTypeProduct });
+
+    const handleChangeSelect = (value) => {
+        setStateProduct({
+            ...stateProduct,
+            type: value,
+        });
+    };
 
     return (
         <div className="admin-product-container">
@@ -516,8 +543,22 @@ function AdminProduct() {
                                 },
                             ]}
                         >
-                            <InputComponent value={stateProduct.type} onChange={handleOnchange} name="type" />
+                            <Select
+                                name="type"
+                                value={stateProduct.type}
+                                onChange={handleChangeSelect}
+                                options={renderOptions(queryTypeProduct?.data?.data)}
+                            />
                         </Form.Item>
+                        {stateProduct.type === 'add_type' && (
+                            <Form.Item
+                                label="New type"
+                                name="newType"
+                                rules={[{ required: true, message: 'Please input your type!' }]}
+                            >
+                                <InputComponent value={stateProduct.newType} onChange={handleOnchange} name="newType" />
+                            </Form.Item>
+                        )}
 
                         <Form.Item
                             label="Count InStock"

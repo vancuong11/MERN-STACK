@@ -24,3 +24,20 @@ export const getItem = (label, key, icon, children, type) => {
         type,
     };
 };
+
+export const renderOptions = (options) => {
+    let result = [];
+    if (options) {
+        result = options.map((opt) => {
+            return {
+                value: opt,
+                label: options.opt,
+            };
+        });
+    }
+    result.push({
+        label: 'Thêm type',
+        value: 'add_type',
+    });
+    return result;
+};

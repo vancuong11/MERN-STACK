@@ -15,7 +15,7 @@ import Loading from '../../components/LoadingComponent/Loading';
 import { useDebounce } from '../../hooks/useDebounce';
 
 function HomePage() {
-    const arr = ['TV', 'Tủ Lạnh', 'Laptop', 'Điện Thoại'];
+    const [typeProduct, setTypeProduct] = useState([]);
     const [stateProduct, setStateProduct] = useState([]);
     const [loading, setLoading] = useState(false);
     const refSearch = useRef(false);
@@ -34,6 +34,14 @@ function HomePage() {
         return res;
     };
 
+    const fetchAllTypeProduct = async () => {
+        const res = await productService.getAllTypeProduct();
+        setTypeProduct(res.data);
+    };
+    useEffect(() => {
+        fetchAllTypeProduct();
+    }, []);
+
     const {
         isLoading,
         data: products,
@@ -47,7 +55,7 @@ function HomePage() {
     return (
         <Loading isLoading={isLoading || loading}>
             <div className="wrapper-homepage">
-                {arr.map((item) => {
+                {typeProduct.map((item) => {
                     return (
                         <div className="type-product" key={item}>
                             <TypeProduct name={item} />
