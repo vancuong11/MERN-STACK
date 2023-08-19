@@ -6,124 +6,176 @@ import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import ModalComponent from '../../components/ModalComponent/ModalComponent';
 import Loading from '../../components/LoadingComponent/Loading';
 import InputComponent from '../../components/InputComponent/InputComponent';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    decreaseAmount,
+    increaseAmount,
+    removeAllOrderProduct,
+    removeOrderProduct,
+} from '../../redux/slices/orderSlide';
+import { useState } from 'react';
 
 function OrderPage() {
+    const order = useSelector((state) => state.order);
+    const dispatch = useDispatch();
+    const [listChecked, setListChecked] = useState([]);
+
+    const handleOnchangeCheckAll = (e) => {
+        if (e.target.checked) {
+            const newListChecked = [];
+            order?.orderItems?.forEach((item) => {
+                newListChecked.push(item?.product);
+            });
+            setListChecked(newListChecked);
+        } else {
+            setListChecked([]);
+        }
+    };
+
+    const onChange = (e) => {
+        if (listChecked.includes(e.target.value)) {
+            const newListChecked = listChecked.filter((item) => item !== e.target.value);
+            setListChecked(newListChecked);
+        } else {
+            setListChecked([...listChecked, e.target.value]);
+        }
+    };
+
+    const handleDeleteOrder = (idProduct) => {
+        dispatch(removeOrderProduct({ idProduct }));
+    };
+
+    const handleRemoveAllOrder = () => {
+        if (listChecked?.length > 1) {
+            dispatch(removeAllOrderProduct({ listChecked }));
+        }
+    };
+
+    const handleChangeCount = (type, idProduct) => {
+        if (type === 'increase') {
+            dispatch(increaseAmount({ idProduct }));
+        } else {
+            dispatch(decreaseAmount({ idProduct }));
+        }
+    };
     return (
         <div className="order-page-container">
             <div className="order-body">
                 <h3 className="cart">Giỏ hàng</h3>
                 <div className="order-content">
                     <div className="order-left">
-                        {/* <h4>Phí giao hàng</h4>
-                        <div className="delivery">
-                            <StepComponent
-                                items={itemsDelivery}
-                                current={
-                                    diliveryPriceMemo === 10000
-                                        ? 2
-                                        : diliveryPriceMemo === 20000
-                                        ? 1
-                                        : order.orderItemsSlected.length === 0
-                                        ? 0
-                                        : 3
-                                }
-                            />
-                        </div> */}
                         <div className="header">
                             <span style={{ display: 'inline-block', width: '390px' }}>
                                 <Checkbox
-                                // className="checkbox"
-                                // onChange={handleOnchangeCheckAll}
-                                // checked={listChecked?.length === order?.orderItems?.length}
+                                    className="checkbox"
+                                    onChange={handleOnchangeCheckAll}
+                                    checked={listChecked?.length === order?.orderItems?.length}
                                 ></Checkbox>
-                                <span>
-                                    {' '}
-                                    Tất cả ({/* {order?.orderItems?.length}  */}
-                                    sản phẩm)
-                                </span>
+                                <span>Tất cả ({order?.orderItems?.length} sản phẩm)</span>
                             </span>
                             <div className="columns">
                                 <span>Đơn giá</span>
                                 <span>Số lượng</span>
                                 <span>Thành tiền</span>
-                                <DeleteOutlined
-                                // onClick={handleRemoveAllOrder}
-                                />
+                                <DeleteOutlined onClick={handleRemoveAllOrder} />
                             </div>
                         </div>
                         <div className="list-order">
-                            <div className="item-order">
-                                <div style={{ width: '390px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                    <Checkbox
-                                    // onChange={onChange} value={order?.product} checked={listChecked.includes(order?.product)}
-                                    />
-                                    <img
-                                        src={imageProduct}
-                                        alt="image"
-                                        style={{ width: '77px', height: '79px', objectFit: 'cover' }}
-                                    />
-                                    <div
-                                        style={{
-                                            width: 260,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        Name sản phẩm
-                                    </div>
-                                </div>
-                                <div
-                                    style={{
-                                        flex: 1,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    <span>
-                                        <span style={{ fontSize: '13px', color: '#242424' }}>Giá</span>
-                                    </span>
+                            {order?.orderItems?.map((order) => {
+                                return (
+                                    <>
+                                        <div className="item-order">
+                                            <div
+                                                style={{
+                                                    width: '390px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 4,
+                                                }}
+                                            >
+                                                <Checkbox
+                                                    onChange={onChange}
+                                                    value={order?.product}
+                                                    checked={listChecked.includes(order?.product)}
+                                                />
+                                                <img
+                                                    src={order.image}
+                                                    alt="image"
+                                                    style={{ width: '77px', height: '79px', objectFit: 'cover' }}
+                                                />
+                                                <div
+                                                    style={{
+                                                        width: 260,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    {order.name}
+                                                </div>
+                                            </div>
+                                            <div
+                                                style={{
+                                                    flex: 1,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                }}
+                                            >
+                                                <span>
+                                                    <span style={{ fontSize: '13px', color: '#242424' }}>
+                                                        {order.price}
+                                                    </span>
+                                                </span>
 
-                                    <div className="count-order">
-                                        <button
-                                            style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
-                                            // onClick={() =>
-                                            //     handleChangeCount('decrease', order?.product, order?.amount === 1)
-                                            // }
-                                        >
-                                            <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
-                                        </button>
-                                        <InputNumber
-                                            size="small"
-                                            defaultValue={1}
-                                            min={1}
-                                            // defaultValue={order?.amount} value={order?.amount}  max={order?.countInstock}
-                                        />
-                                        <button
-                                            style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
-                                            // onClick={() =>
-                                            //     handleChangeCount(
-                                            //         'increase',
-                                            //         order?.product,
-                                            //         order?.amount === order.countInstock,
-                                            //         order?.amount === 1,
-                                            //     )
-                                            // }
-                                        >
-                                            <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
-                                        </button>
-                                    </div>
-                                    <span style={{ color: 'rgb(255, 66, 78)', fontSize: '13px', fontWeight: 500 }}>
-                                        500000
-                                        {/* {convertPrice(order?.price * order?.amount)} */}
-                                    </span>
-                                    <DeleteOutlined
-                                        style={{ cursor: 'pointer' }}
-                                        // onClick={() => handleDeleteOrder(order?.product)}
-                                    />
-                                </div>
-                            </div>
+                                                <div className="count-order">
+                                                    <button
+                                                        disabled={order?.amount <= 1 ? true : false}
+                                                        style={{
+                                                            border: 'none',
+                                                            background: 'transparent',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                        onClick={() => handleChangeCount('decrease', order.product)}
+                                                    >
+                                                        <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
+                                                    </button>
+                                                    <InputNumber
+                                                        size="small"
+                                                        min={1}
+                                                        defaultValue={order?.amount}
+                                                        value={order?.amount}
+                                                        // max={order?.countInstock}
+                                                    />
+                                                    <button
+                                                        style={{
+                                                            border: 'none',
+                                                            background: 'transparent',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                        onClick={() => handleChangeCount('increase', order.product)}
+                                                    >
+                                                        <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
+                                                    </button>
+                                                </div>
+                                                <span
+                                                    style={{
+                                                        color: 'rgb(255, 66, 78)',
+                                                        fontSize: '13px',
+                                                        fontWeight: 500,
+                                                    }}
+                                                >
+                                                    {order?.price * order?.amount}
+                                                </span>
+                                                <DeleteOutlined
+                                                    style={{ cursor: 'pointer' }}
+                                                    onClick={() => handleDeleteOrder(order?.product)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </>
+                                );
+                            })}
                         </div>
                     </div>
                     <div className="order-right">

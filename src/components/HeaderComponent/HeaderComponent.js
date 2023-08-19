@@ -18,6 +18,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const [userName, setUserName] = useState('');
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
+    const order = useSelector((state) => state.order);
 
     const dispatch = useDispatch();
 
@@ -126,7 +127,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                             <div className="cart" onClick={() => navigate('/order')}>
                                 <div className="icon-shopping-cart">
                                     <ShoppingCartOutlined />
-                                    <span className="cart-count">0</span>
+                                    <span className="cart-count">{order.orderItems.length}</span>
                                 </div>
                                 <div>Giỏ hàng</div>
                             </div>

@@ -1,4 +1,4 @@
-import { Col, Image, InputNumber, Rate, Row } from 'antd';
+import { Button, Col, Image, InputNumber, Rate, Row, notification } from 'antd';
 
 import './ProductDetailComponent.scss';
 import imageProduct from '../../assets/images/prod1.png';
@@ -9,13 +9,17 @@ import * as productService from '../../services/productService';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { addOrderProduct } from '../../redux/slices/orderSlide';
 
 function ProductDetailComponent(props) {
     const item = props.id;
     const user = useSelector((state) => state.user);
-    console.log(user);
+    const navigate = useNavigate();
+    const location = useLocation();
     const [numProduct, setNumProduct] = useState(1);
+    const dispatch = useDispatch();
 
     const onChange = (value) => {
         setNumProduct(Number(value));
@@ -40,6 +44,47 @@ function ProductDetailComponent(props) {
     const { isLoading, data: productDetails } = useQuery(['product-details', item.id], fetchDetailsProduct, {
         enabled: !!item.id,
     });
+
+    const [api, contextHolder] = notification.useNotification();
+    const openNotification = () => {
+        api.open({
+            message: 'Error!',
+            description: 'You do not have an account to add products! Please login account.',
+            duration: 3,
+        });
+    };
+    const handleAddOrderProduct = () => {
+        if (!user.isAdmin) {
+            openNotification();
+            setTimeout(() => {
+                navigate('/sign-in', { state: location.pathname });
+            }, 3000);
+        } else {
+            // {
+            //     name: { type: String, required: true },
+            //     amount: { type: Number, required: true },
+            //     image: { type: String, required: true },
+            //     price: { type: Number, required: true },
+            //     // join table product into orderProduct
+            //     product: {
+            //         type: mongoose.Schema.Types.ObjectId,
+            //         ref: 'Product',
+            //         required: true,
+            //     },
+            // },
+            dispatch(
+                addOrderProduct({
+                    orderItem: {
+                        name: productDetails?.name,
+                        amount: numProduct,
+                        image: productDetails?.image,
+                        price: productDetails?.price,
+                        product: productDetails?._id,
+                    },
+                }),
+            );
+        }
+    };
 
     return (
         <Loading isLoading={isLoading}>
@@ -151,6 +196,7 @@ function ProductDetailComponent(props) {
 
                             <div className="group-button">
                                 <ButtonComponent
+                                    onClick={handleAddOrderProduct}
                                     className="btn-submit-product"
                                     type="primary"
                                     danger
@@ -167,6 +213,8 @@ function ProductDetailComponent(props) {
                     </Col>
                 </Row>
             </div>
+
+            {contextHolder}
         </Loading>
     );
 }
