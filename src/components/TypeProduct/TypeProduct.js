@@ -1,5 +1,21 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+
 function TypeProduct({ name }) {
-    return <div style={{ padding: '0 10px' }}>{name}</div>;
+    const navigate = useNavigate();
+    const handleNavigateType = (type) => {
+        navigate(
+            `/product/${type
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                ?.replace(/ /g, '_')}`,
+            { state: type },
+        );
+    };
+    return (
+        <div style={{ padding: '0 10px', cursor: 'pointer' }} onClick={() => handleNavigateType(name)}>
+            {name}
+        </div>
+    );
 }
 
 export default TypeProduct;

@@ -21,7 +21,7 @@ function ProductDetailComponent(props) {
         setNumProduct(Number(value));
     };
 
-    const handleChangeCount = (type) => {
+    const handleChangeCount = (type, e) => {
         if (type === 'increase') {
             setNumProduct(numProduct + 1);
         } else {
@@ -127,6 +127,7 @@ function ProductDetailComponent(props) {
                                 <p>Số lượng</p>
                                 <div>
                                     <ButtonComponent
+                                        disabled={numProduct <= 1 ? true : false}
                                         icon={<MinusOutlined />}
                                         size="small"
                                         onClick={() => handleChangeCount('decrease')}
@@ -140,6 +141,7 @@ function ProductDetailComponent(props) {
                                         max={10}
                                     />
                                     <ButtonComponent
+                                        disabled={numProduct >= 10 ? true : false}
                                         icon={<PlusOutlined />}
                                         size="small"
                                         onClick={() => handleChangeCount('increase')}

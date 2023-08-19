@@ -123,7 +123,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                         </Loading>
 
                         {!isHiddenCart && (
-                            <div className="cart">
+                            <div className="cart" onClick={() => navigate('/order')}>
                                 <div className="icon-shopping-cart">
                                     <ShoppingCartOutlined />
                                     <span className="cart-count">0</span>
