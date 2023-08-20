@@ -12,6 +12,8 @@ import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addOrderProduct } from '../../redux/slices/orderSlide';
+import { convertPrice } from '../../utils';
+import * as message from '../../components/Message/Message';
 
 function ProductDetailComponent(props) {
     const item = props.id;
@@ -60,18 +62,7 @@ function ProductDetailComponent(props) {
                 navigate('/sign-in', { state: location.pathname });
             }, 3000);
         } else {
-            // {
-            //     name: { type: String, required: true },
-            //     amount: { type: Number, required: true },
-            //     image: { type: String, required: true },
-            //     price: { type: Number, required: true },
-            //     // join table product into orderProduct
-            //     product: {
-            //         type: mongoose.Schema.Types.ObjectId,
-            //         ref: 'Product',
-            //         required: true,
-            //     },
-            // },
+            message.success('Product had added to cart!');
             dispatch(
                 addOrderProduct({
                     orderItem: {
@@ -79,6 +70,7 @@ function ProductDetailComponent(props) {
                         amount: numProduct,
                         image: productDetails?.image,
                         price: productDetails?.price,
+                        discount: productDetails?.price * Number(productDetails?.discount / 100),
                         product: productDetails?._id,
                     },
                 }),
@@ -161,7 +153,7 @@ function ProductDetailComponent(props) {
                                 <span className="sell">| Đã bán 29</span>
                             </div>
                             <div className="price">
-                                <div className="price-text">{productDetails?.price.toLocaleString()}</div>
+                                <div className="price-text">{convertPrice(productDetails?.price)}</div>
 
                                 <div className="address">
                                     Giao đến <span>{user.address} </span> -

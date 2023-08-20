@@ -13,12 +13,14 @@ import {
     removeAllOrderProduct,
     removeOrderProduct,
 } from '../../redux/slices/orderSlide';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { convertPrice } from '../../utils';
 
 function OrderPage() {
     const order = useSelector((state) => state.order);
     const dispatch = useDispatch();
     const [listChecked, setListChecked] = useState([]);
+    const user = useSelector((state) => state.user);
 
     const handleOnchangeCheckAll = (e) => {
         if (e.target.checked) {
@@ -58,6 +60,44 @@ function OrderPage() {
             dispatch(decreaseAmount({ idProduct }));
         }
     };
+
+    const priceMemo = useMemo(() => {
+        const result = order?.orderItems?.reduce((total, currentValue) => {
+            return total + currentValue.price * currentValue.amount;
+        }, 0);
+        return result;
+    }, [order]);
+    console.log(order.orderItems);
+    const priceDiscountMemo = useMemo(() => {
+        let total = 0;
+        order.orderItems.map((item) => {
+            total += Math.ceil(item.discount * item.amount);
+        });
+        // const result = order?.orderItems?.reduce((total, currentValue) => {
+        //     return total + currentValue.discount * currentValue.amount;
+        // }, 0);
+        // if (Number(result)) {
+        //     return result;
+        // } else {
+        //     return 0;
+        // }
+        return total;
+    }, [order]);
+
+    const deliveryPriceMemo = useMemo(() => {
+        if (priceMemo > 200000) {
+            return 10000;
+        } else if (priceMemo === 0) {
+            return 0;
+        } else {
+            return 20000;
+        }
+    }, [priceMemo]);
+
+    const totalPriceMemo = useMemo(() => {
+        return Math.round(Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo));
+    }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
+
     return (
         <div className="order-page-container">
             <div className="order-body">
@@ -124,7 +164,7 @@ function OrderPage() {
                                             >
                                                 <span>
                                                     <span style={{ fontSize: '13px', color: '#242424' }}>
-                                                        {order.price}
+                                                        {convertPrice(order.price)}
                                                     </span>
                                                 </span>
 
@@ -165,7 +205,7 @@ function OrderPage() {
                                                         fontWeight: 500,
                                                     }}
                                                 >
-                                                    {order?.price * order?.amount}
+                                                    {convertPrice(order?.price * order?.amount)}
                                                 </span>
                                                 <DeleteOutlined
                                                     style={{ cursor: 'pointer' }}
@@ -180,11 +220,11 @@ function OrderPage() {
                     </div>
                     <div className="order-right">
                         <div style={{ width: '100%' }}>
-                            <div className="address">
+                            {/* <div className="address">
                                 <div>
                                     <span>Địa chỉ: </span>
                                     <span style={{ fontWeight: 'bold' }}>
-                                        {/* {`${user?.address} ${user?.city}`}  */}
+                                        {`${user?.address} ${user?.city}`} 
                                     </span>
                                     <span
                                         // onClick={handleChangeAddress}
@@ -193,26 +233,25 @@ function OrderPage() {
                                         Thay đổi
                                     </span>
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className="address">
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>Tạm tính</span>
                                     <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
-                                        1000
-                                        {/* {convertPrice(priceMemo)} */}
+                                        {convertPrice(priceMemo)}
                                     </span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>Giảm giá</span>
                                     <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
-                                        {/* {convertPrice(priceDiscountMemo)} */} 100
+                                        {convertPrice(priceDiscountMemo)}
                                     </span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>Phí giao hàng</span>
                                     <span style={{ color: '#000', fontSize: '14px', fontWeight: 'bold' }}>
-                                        {/* {convertPrice(diliveryPriceMemo)} */}100
+                                        {convertPrice(deliveryPriceMemo)}
                                     </span>
                                 </div>
                             </div>
@@ -221,7 +260,7 @@ function OrderPage() {
                                 <span>Tổng tiền</span>
                                 <span style={{ display: 'flex', flexDirection: 'column' }}>
                                     <span style={{ color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold' }}>
-                                        {/* {convertPrice(totalPriceMemo)} */}100
+                                        {convertPrice(totalPriceMemo)}
                                     </span>
                                     <span style={{ color: '#000', fontSize: '11px' }}>(Đã bao gồm VAT nếu có)</span>
                                 </span>

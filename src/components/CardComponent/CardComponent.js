@@ -3,6 +3,7 @@ import { StarFilled } from '@ant-design/icons';
 import './CardComponent.scss';
 import logo from '../../assets/images/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { convertPrice } from '../../utils';
 
 function CardComponent(props) {
     const { item } = props;
@@ -33,7 +34,7 @@ function CardComponent(props) {
                     <span>| Đã bán {item.selled || 1000}+</span>
                 </div>
                 <div className="price">
-                    {item.price.toLocaleString()} VND
+                    {convertPrice(item.price)}
                     <span className="discount"> - {item.discount || 5}%</span>
                 </div>
             </div>
