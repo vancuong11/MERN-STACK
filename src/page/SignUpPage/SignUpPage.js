@@ -98,7 +98,7 @@ function SignUpPage() {
                                 className="btn-submit-product"
                                 type="primary"
                                 danger
-                                textButton="Đăng Ký"
+                                textbutton="Đăng Ký"
                             />
                         </div>
                     </Loading>

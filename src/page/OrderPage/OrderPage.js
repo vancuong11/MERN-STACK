@@ -21,6 +21,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { convertPrice } from '../../utils';
 import { useMutationHooks } from '../../hooks/useMutationHook';
 import { updateUser } from '../../redux/slices/userSlide';
+import { useNavigate } from 'react-router-dom';
 
 function OrderPage() {
     const order = useSelector((state) => state.order);
@@ -34,6 +35,7 @@ function OrderPage() {
         address: '',
         city: '',
     });
+    const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const handleOnchangeCheckAll = (e) => {
@@ -128,6 +130,8 @@ function OrderPage() {
             message.error('Vui lòng chọn sản phẩm');
         } else if (!user.phone || !user.address || !user.name || !user.city) {
             setIsOpenModalUpdateInfo(true);
+        } else {
+            navigate('/payment');
         }
     };
 
@@ -156,7 +160,6 @@ function OrderPage() {
     });
 
     const { isLoading, data } = mutationUpdate;
-    console.log(data);
     const handleUpdateInfoUser = () => {
         const { name, address, city, phone } = stateUserDetails;
         if (name && address && city && phone) {
@@ -170,6 +173,10 @@ function OrderPage() {
                 },
             );
         }
+    };
+
+    const handleChangeAddress = () => {
+        setIsOpenModalUpdateInfo(true);
     };
 
     return (
@@ -294,20 +301,23 @@ function OrderPage() {
                     </div>
                     <div className="order-right">
                         <div style={{ width: '100%' }}>
-                            {/* <div className="address">
+                            <div className="address">
                                 <div>
                                     <span>Địa chỉ: </span>
-                                    <span style={{ fontWeight: 'bold' }}>
-                                        {`${user?.address} ${user?.city}`} 
-                                    </span>
+                                    <span style={{ fontWeight: 'bold' }}>{`${user?.address} ${user?.city}`} </span>
                                     <span
-                                        // onClick={handleChangeAddress}
-                                        style={{ color: '#9255FD', cursor: 'pointer' }}
+                                        onClick={handleChangeAddress}
+                                        style={{
+                                            color: '#9255FD',
+                                            cursor: 'pointer',
+                                            fontWeight: 'bold',
+                                            marginLeft: '10px',
+                                        }}
                                     >
                                         Thay đổi
                                     </span>
                                 </div>
-                            </div> */}
+                            </div>
 
                             <div className="address">
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -343,7 +353,7 @@ function OrderPage() {
                                 <ButtonComponent
                                     onClick={handleBuyProduct}
                                     className="btn-submit-product"
-                                    textButton={'Mua hàng'}
+                                    textbutton={'Mua hàng'}
                                     type="primary"
                                     danger
                                 />
@@ -354,6 +364,7 @@ function OrderPage() {
             </div>
 
             <ModalComponent
+                forceRender
                 title="Cập nhật thông tin giao hàng"
                 open={isOpenModalUpdateInfo}
                 onCancel={handleCancelUpdate}

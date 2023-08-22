@@ -1,9 +1,9 @@
 import { Button } from 'antd';
 
-function ButtonComponent({ size, textButton, icon, ...rests }) {
+function ButtonComponent({ size, textbutton, icon, ...rests }) {
     return (
         <Button size={size} icon={icon} {...rests}>
-            {textButton}
+            {textbutton}
         </Button>
     );
 }

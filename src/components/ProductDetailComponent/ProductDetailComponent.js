@@ -192,13 +192,13 @@ function ProductDetailComponent(props) {
                                     className="btn-submit-product"
                                     type="primary"
                                     danger
-                                    textButton="Chọn mua"
+                                    textbutton="Chọn mua"
                                 />
 
                                 <ButtonComponent
                                     type="primary"
                                     className="btn-pay-later-product"
-                                    textButton="Mua trả sau"
+                                    textbutton="Mua trả sau"
                                 />
                             </div>
                         </div>

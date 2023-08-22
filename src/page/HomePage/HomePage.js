@@ -73,7 +73,7 @@ function HomePage() {
                 </div>
                 <div className="btn-see-more">
                     <ButtonComponent
-                        textButton={isPreviousData ? 'Load more' : 'Xem thêm'}
+                        textbutton={isPreviousData ? 'Load more' : 'Xem thêm'}
                         size="large"
                         onClick={() => setLimit((prev) => prev + 6)}
                         disabled={products?.total === products?.data?.length || products?.totalPage === 1}

@@ -118,7 +118,7 @@ function Profile() {
                         /> */}
                     </div>
                     <div className="btn-submit-profile">
-                        <ButtonComponent textButton="Cập nhật" type="primary" onClick={handleUpdateUser} />
+                        <ButtonComponent textbutton="Cập nhật" type="primary" onClick={handleUpdateUser} />
                     </div>
                 </div>
             </Loading>

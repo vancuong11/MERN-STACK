@@ -81,7 +81,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                         <ButtonInputSearch
                             placeholder="Tìm kiếm"
                             size="lagre"
-                            textButton="Tìm kiếm"
+                            textbutton="Tìm kiếm"
                             onChange={onSearch}
                         />
                     </Col>
