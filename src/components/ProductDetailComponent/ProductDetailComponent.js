@@ -205,7 +205,6 @@ function ProductDetailComponent(props) {
                     </Col>
                 </Row>
             </div>
-
             {contextHolder}
         </Loading>
     );

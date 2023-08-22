@@ -7,20 +7,34 @@ import ModalComponent from '../../components/ModalComponent/ModalComponent';
 import Loading from '../../components/LoadingComponent/Loading';
 import InputComponent from '../../components/InputComponent/InputComponent';
 import { useDispatch, useSelector } from 'react-redux';
+import * as userService from '../../services/userService';
+import * as message from '../../components/Message/Message';
+
 import {
     decreaseAmount,
     increaseAmount,
     removeAllOrderProduct,
     removeOrderProduct,
+    selectedOrder,
 } from '../../redux/slices/orderSlide';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { convertPrice } from '../../utils';
+import { useMutationHooks } from '../../hooks/useMutationHook';
+import { updateUser } from '../../redux/slices/userSlide';
 
 function OrderPage() {
     const order = useSelector((state) => state.order);
     const dispatch = useDispatch();
     const [listChecked, setListChecked] = useState([]);
     const user = useSelector((state) => state.user);
+    const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
+    const [stateUserDetails, setStateUserDetails] = useState({
+        name: '',
+        phone: '',
+        address: '',
+        city: '',
+    });
+    const [form] = Form.useForm();
 
     const handleOnchangeCheckAll = (e) => {
         if (e.target.checked) {
@@ -62,25 +76,17 @@ function OrderPage() {
     };
 
     const priceMemo = useMemo(() => {
-        const result = order?.orderItems?.reduce((total, currentValue) => {
+        const result = order?.orderItemsSelected?.reduce((total, currentValue) => {
             return total + currentValue.price * currentValue.amount;
         }, 0);
         return result;
     }, [order]);
-    console.log(order.orderItems);
+
     const priceDiscountMemo = useMemo(() => {
         let total = 0;
-        order.orderItems.map((item) => {
+        order.orderItemsSelected.map((item) => {
             total += Math.ceil(item.discount * item.amount);
         });
-        // const result = order?.orderItems?.reduce((total, currentValue) => {
-        //     return total + currentValue.discount * currentValue.amount;
-        // }, 0);
-        // if (Number(result)) {
-        //     return result;
-        // } else {
-        //     return 0;
-        // }
         return total;
     }, [order]);
 
@@ -97,6 +103,74 @@ function OrderPage() {
     const totalPriceMemo = useMemo(() => {
         return Math.round(Number(priceMemo) - Number(priceDiscountMemo) + Number(deliveryPriceMemo));
     }, [priceMemo, priceDiscountMemo, deliveryPriceMemo]);
+
+    useEffect(() => {
+        dispatch(selectedOrder({ listChecked }));
+    }, [listChecked]);
+
+    useEffect(() => {
+        if (isOpenModalUpdateInfo) {
+            setStateUserDetails({
+                city: user?.city,
+                name: user?.name,
+                address: user?.address,
+                phone: user?.phone,
+            });
+        }
+    }, [isOpenModalUpdateInfo]);
+
+    useEffect(() => {
+        form.setFieldsValue(stateUserDetails);
+    }, [form, stateUserDetails]);
+
+    const handleBuyProduct = () => {
+        if (!order.orderItemsSelected.length) {
+            message.error('Vui lòng chọn sản phẩm');
+        } else if (!user.phone || !user.address || !user.name || !user.city) {
+            setIsOpenModalUpdateInfo(true);
+        }
+    };
+
+    const handleOnchangeDetails = (e) => {
+        setStateUserDetails({
+            ...stateUserDetails,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleCancelUpdate = () => {
+        setStateUserDetails({
+            name: '',
+            email: '',
+            phone: '',
+            isAdmin: false,
+        });
+        form.resetFields();
+        setIsOpenModalUpdateInfo(false);
+    };
+
+    const mutationUpdate = useMutationHooks((data) => {
+        const { id, token, ...rests } = data;
+        const res = userService.updateUser(id, { ...rests }, token);
+        return res;
+    });
+
+    const { isLoading, data } = mutationUpdate;
+    console.log(data);
+    const handleUpdateInfoUser = () => {
+        const { name, address, city, phone } = stateUserDetails;
+        if (name && address && city && phone) {
+            mutationUpdate.mutate(
+                { id: user?.id, ...stateUserDetails, token: user?.access_token },
+                {
+                    onSuccess: () => {
+                        dispatch(updateUser({ name, address, city, phone }));
+                        setIsOpenModalUpdateInfo(false);
+                    },
+                },
+            );
+        }
+    };
 
     return (
         <div className="order-page-container">
@@ -121,9 +195,9 @@ function OrderPage() {
                             </div>
                         </div>
                         <div className="list-order">
-                            {order?.orderItems?.map((order) => {
+                            {order?.orderItems?.map((order, index) => {
                                 return (
-                                    <>
+                                    <div key={index}>
                                         <div className="item-order">
                                             <div
                                                 style={{
@@ -213,7 +287,7 @@ function OrderPage() {
                                                 />
                                             </div>
                                         </div>
-                                    </>
+                                    </div>
                                 );
                             })}
                         </div>
@@ -267,6 +341,7 @@ function OrderPage() {
                             </div>
                             <div className="btn-submit">
                                 <ButtonComponent
+                                    onClick={handleBuyProduct}
                                     className="btn-submit-product"
                                     textButton={'Mua hàng'}
                                     type="primary"
@@ -280,20 +355,18 @@ function OrderPage() {
 
             <ModalComponent
                 title="Cập nhật thông tin giao hàng"
-                // open={isOpenModalUpdateInfo}
-                // onCancel={handleCancleUpdate}
-                // onOk={handleUpdateInforUser}
+                open={isOpenModalUpdateInfo}
+                onCancel={handleCancelUpdate}
+                onOk={handleUpdateInfoUser}
             >
-                <Loading
-                // isLoading={isLoading}
-                >
+                <Loading isLoading={isLoading}>
                     <Form
                         name="basic"
                         labelCol={{ span: 4 }}
                         wrapperCol={{ span: 20 }}
                         // onFinish={onUpdateUser}
                         autoComplete="on"
-                        // form={form}
+                        form={form}
                     >
                         <Form.Item
                             label="Name"
@@ -301,8 +374,8 @@ function OrderPage() {
                             rules={[{ required: true, message: 'Please input your name!' }]}
                         >
                             <InputComponent
-                                // value={stateUserDetails['name']}
-                                // onChange={handleOnchangeDetails}
+                                value={stateUserDetails['name']}
+                                onChange={handleOnchangeDetails}
                                 name="name"
                             />
                         </Form.Item>
@@ -312,8 +385,8 @@ function OrderPage() {
                             rules={[{ required: true, message: 'Please input your city!' }]}
                         >
                             <InputComponent
-                                // value={stateUserDetails['city']}
-                                // onChange={handleOnchangeDetails}
+                                value={stateUserDetails['city']}
+                                onChange={handleOnchangeDetails}
                                 name="city"
                             />
                         </Form.Item>
@@ -323,20 +396,20 @@ function OrderPage() {
                             rules={[{ required: true, message: 'Please input your  phone!' }]}
                         >
                             <InputComponent
-                                // value={stateUserDetails.phone}
-                                // onChange={handleOnchangeDetails}
+                                value={stateUserDetails.phone}
+                                onChange={handleOnchangeDetails}
                                 name="phone"
                             />
                         </Form.Item>
 
                         <Form.Item
-                            label="Adress"
+                            label="Address"
                             name="address"
                             rules={[{ required: true, message: 'Please input your  address!' }]}
                         >
                             <InputComponent
-                                // value={stateUserDetails.address}
-                                // onChange={handleOnchangeDetails}
+                                value={stateUserDetails.address}
+                                onChange={handleOnchangeDetails}
                                 name="address"
                             />
                         </Form.Item>
