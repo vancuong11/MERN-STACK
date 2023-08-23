@@ -22,6 +22,8 @@ import { convertPrice } from '../../utils';
 import { useMutationHooks } from '../../hooks/useMutationHook';
 import { updateUser } from '../../redux/slices/userSlide';
 import { useNavigate } from 'react-router-dom';
+import Step from '../../components/Steps/StepComponent';
+import StepComponent from '../../components/Steps/StepComponent';
 
 function OrderPage() {
     const order = useSelector((state) => state.order);
@@ -93,9 +95,9 @@ function OrderPage() {
     }, [order]);
 
     const deliveryPriceMemo = useMemo(() => {
-        if (priceMemo > 200000) {
+        if (priceMemo > 200000 && priceMemo < 500000) {
             return 10000;
-        } else if (priceMemo === 0) {
+        } else if (priceMemo >= 500000 || order?.orderItemsSelected?.length === 0) {
             return 0;
         } else {
             return 20000;
@@ -179,12 +181,41 @@ function OrderPage() {
         setIsOpenModalUpdateInfo(true);
     };
 
+    const itemsDelivery = [
+        {
+            title: '20.000 VND',
+            description: 'Dưới 200.000 VND',
+        },
+        {
+            title: '10.000 VND',
+            description: 'Từ 200.000 VND đến dưới 500.000 VND',
+        },
+        {
+            title: '0 VND',
+            description: 'Trên 500.000 VND',
+        },
+    ];
+
     return (
         <div className="order-page-container">
             <div className="order-body">
                 <h3 className="cart">Giỏ hàng</h3>
                 <div className="order-content">
                     <div className="order-left">
+                        <div className="order-step">
+                            <StepComponent
+                                items={itemsDelivery}
+                                current={
+                                    deliveryPriceMemo === 10000
+                                        ? 2
+                                        : deliveryPriceMemo === 20000
+                                        ? 1
+                                        : order.orderItemsSelected.length === 0
+                                        ? 0
+                                        : 3
+                                }
+                            />
+                        </div>
                         <div className="header">
                             <span style={{ display: 'inline-block', width: '390px' }}>
                                 <Checkbox

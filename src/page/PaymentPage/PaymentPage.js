@@ -12,11 +12,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
 import * as message from '../../components/Message/Message';
 import { updateUser } from '../../redux/slices/userSlide';
+import { useNavigate } from 'react-router-dom';
+import { removeAllOrderProduct } from '../../redux/slices/orderSlide';
 
 function PaymentPage() {
     const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
-
+    const navigate = useNavigate();
     const [delivery, setDelivery] = useState('fast');
     const [payment, setPayment] = useState('later_money');
 
@@ -116,7 +118,20 @@ function PaymentPage() {
 
     useEffect(() => {
         if (isSuccess && dataAdd?.status === 'OK') {
+            const arrOrder = [];
+            order.orderItemsSelected.forEach((item) => {
+                arrOrder.push(item.product);
+            });
+            dispatch(removeAllOrderProduct({ listChecked: arrOrder }));
             message.success('Đặt hàng thành công');
+            navigate('/order-success', {
+                state: {
+                    delivery,
+                    payment,
+                    totalPriceMemo,
+                    orders: order.orderItemsSelected,
+                },
+            });
         } else if (isError) {
             message.error();
         }

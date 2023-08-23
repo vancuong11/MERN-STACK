@@ -21,6 +21,15 @@
             .order-left {
                 width: 910px;
 
+                .order-step {
+                    background   : rgb(255, 255, 255);
+                    padding      : 9px 16px;
+                    border-radius: 4px;
+                    display      : flex;
+                    align-items  : center;
+                    margin-bottom: 4px;
+                }
+
                 .delivery {
                     background   : rgb(255, 255, 255);
                     padding      : 9px 16px;
