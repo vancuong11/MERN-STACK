@@ -53,6 +53,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         <div className="content-infor-user">
             <p onClick={handleNavigateProfile}>Thông tin tài khoản</p>
             {user.isAdmin && <p onClick={handleNavigateAdmin}>Quản lí hệ thống</p>}
+            <p onClick={() => navigate('/my-order')}>Đơn hàng của tôi</p>
             <p onClick={handleLogout}>Đăng xuất</p>
         </div>
     );

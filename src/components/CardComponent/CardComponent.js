@@ -12,33 +12,39 @@ function CardComponent(props) {
         const id = item._id;
         navigate(`/product-detail/${id}`);
     };
+    console.log(item);
     return (
-        <Card
-            className="card-style"
-            onClick={handleDetailsProduct}
-            hoverable
-            style={{
-                width: 200,
-            }}
-            bodyStyle={{ padding: '10px' }}
-            cover={<img alt="example" src={item.image} />}
-        >
-            <img src={logo} className="card-logo" />
-            <div className="content">
-                <div className="name-product">{item.name}</div>
-                <div className="report-text">
-                    <span>
-                        <span>{item.rating} </span>
-                        <StarFilled className="icon-report" />
-                    </span>
-                    <span>| Đã bán {item.selled || 1000}+</span>
+        <>
+            <Card
+                className="card-style"
+                onClick={() => item.countInStock !== 0 && handleDetailsProduct(item._id)}
+                hoverable
+                style={
+                    item.countInStock === 0
+                        ? { backgroundColor: '#ccc', cursor: 'not-allowed' }
+                        : { backgroundColor: '#fff', cursor: 'pointer' }
+                }
+                bodyStyle={{ padding: '10px' }}
+                cover={<img alt="example" src={item.image} />}
+                disabled={item.countInStock === 0}
+            >
+                <img src={logo} className="card-logo" />
+                <div className="content">
+                    <div className="name-product">{item.name}</div>
+                    <div className="report-text">
+                        <span>
+                            <span>{item.rating} </span>
+                            <StarFilled className="icon-report" />
+                        </span>
+                        <span>| Đã bán {item.sell || 1000}+</span>
+                    </div>
+                    <div className="price">
+                        {convertPrice(item.price)}
+                        <span className="discount"> - {item.discount || 5}%</span>
+                    </div>
                 </div>
-                <div className="price">
-                    {convertPrice(item.price)}
-                    <span className="discount"> - {item.discount || 5}%</span>
-                </div>
-            </div>
-        </Card>
+            </Card>
+        </>
     );
 }
 
