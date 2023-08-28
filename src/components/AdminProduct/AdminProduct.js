@@ -24,7 +24,7 @@ function AdminProduct() {
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
     const [typeSelect, setTypeSelect] = useState('');
-    const [stateProduct, setStateProduct] = useState({
+    const initial = () => ({
         name: '',
         price: '',
         description: '',
@@ -36,16 +36,9 @@ function AdminProduct() {
         discount: '',
     });
 
-    const [stateProductDetail, setStateProductDetail] = useState({
-        name: '',
-        price: '',
-        description: '',
-        rating: '',
-        image: '',
-        countInStock: '',
-        type: '',
-        discount: '',
-    });
+    const [stateProduct, setStateProduct] = useState(initial());
+
+    const [stateProductDetail, setStateProductDetail] = useState(initial());
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -160,8 +153,12 @@ function AdminProduct() {
     };
 
     useEffect(() => {
-        form.setFieldsValue(stateProductDetail);
-    }, [form, stateProductDetail]);
+        if (!isModalOpen) {
+            form.setFieldsValue(stateProductDetail);
+        } else {
+            form.setFieldsValue(initial());
+        }
+    }, [form, stateProductDetail, isModalOpen]);
 
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {

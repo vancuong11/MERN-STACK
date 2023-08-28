@@ -12,7 +12,6 @@ function CardComponent(props) {
         const id = item._id;
         navigate(`/product-detail/${id}`);
     };
-    console.log(item);
     return (
         <>
             <Card

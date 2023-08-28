@@ -33,6 +33,14 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
     const handleNavigateAdmin = () => {
         navigate('/system/admin');
     };
+    const handleNavigateMyOrder = () => {
+        navigate(`/my-order`, {
+            state: {
+                id: user.id,
+                access_token: user.access_token,
+            },
+        });
+    };
 
     const handleLogout = async () => {
         setLoading(true);
@@ -53,7 +61,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
         <div className="content-infor-user">
             <p onClick={handleNavigateProfile}>Thông tin tài khoản</p>
             {user.isAdmin && <p onClick={handleNavigateAdmin}>Quản lí hệ thống</p>}
-            <p onClick={() => navigate('/my-order')}>Đơn hàng của tôi</p>
+            <p onClick={handleNavigateMyOrder}>Đơn hàng của tôi</p>
             <p onClick={handleLogout}>Đăng xuất</p>
         </div>
     );
