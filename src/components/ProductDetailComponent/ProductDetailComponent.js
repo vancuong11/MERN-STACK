@@ -72,6 +72,7 @@ function ProductDetailComponent(props) {
                         price: productDetails?.price,
                         discount: productDetails?.price * Number(productDetails?.discount / 100),
                         product: productDetails?._id,
+                        countInStock: productDetails?.countInStock,
                     },
                 }),
             );

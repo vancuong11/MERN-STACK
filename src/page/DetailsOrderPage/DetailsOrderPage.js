@@ -33,7 +33,6 @@ function DetailsOrderPage() {
         }, 0);
         return result;
     }, [data]);
-    console.log(data);
     return (
         <Loading isLoading={isLoading}>
             <div className="details-order-container">

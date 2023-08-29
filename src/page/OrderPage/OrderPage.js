@@ -27,6 +27,7 @@ import StepComponent from '../../components/Steps/StepComponent';
 
 function OrderPage() {
     const order = useSelector((state) => state.order);
+    console.log(order);
     const dispatch = useDispatch();
     const [listChecked, setListChecked] = useState([]);
     const user = useSelector((state) => state.user);
@@ -71,11 +72,15 @@ function OrderPage() {
         }
     };
 
-    const handleChangeCount = (type, idProduct) => {
+    const handleChangeCount = (type, idProduct, limited) => {
         if (type === 'increase') {
-            dispatch(increaseAmount({ idProduct }));
+            if (!limited) {
+                dispatch(increaseAmount({ idProduct }));
+            }
         } else {
-            dispatch(decreaseAmount({ idProduct }));
+            if (!limited) {
+                dispatch(decreaseAmount({ idProduct }));
+            }
         }
     };
 
@@ -234,6 +239,7 @@ function OrderPage() {
                         </div>
                         <div className="list-order">
                             {order?.orderItems?.map((order, index) => {
+                                console.log(order);
                                 return (
                                     <div key={index}>
                                         <div className="item-order">
@@ -282,13 +288,18 @@ function OrderPage() {
 
                                                 <div className="count-order">
                                                     <button
-                                                        disabled={order?.amount <= 1 ? true : false}
                                                         style={{
                                                             border: 'none',
                                                             background: 'transparent',
                                                             cursor: 'pointer',
                                                         }}
-                                                        onClick={() => handleChangeCount('decrease', order.product)}
+                                                        onClick={() =>
+                                                            handleChangeCount(
+                                                                'decrease',
+                                                                order.product,
+                                                                order.amount === 1,
+                                                            )
+                                                        }
                                                     >
                                                         <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                     </button>
@@ -297,7 +308,7 @@ function OrderPage() {
                                                         min={1}
                                                         defaultValue={order?.amount}
                                                         value={order?.amount}
-                                                        // max={order?.countInstock}
+                                                        max={order?.countInStock}
                                                     />
                                                     <button
                                                         style={{
@@ -305,7 +316,13 @@ function OrderPage() {
                                                             background: 'transparent',
                                                             cursor: 'pointer',
                                                         }}
-                                                        onClick={() => handleChangeCount('increase', order.product)}
+                                                        onClick={() =>
+                                                            handleChangeCount(
+                                                                'increase',
+                                                                order.product,
+                                                                order.amount === order.countInStock,
+                                                            )
+                                                        }
                                                     >
                                                         <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                     </button>

@@ -115,7 +115,7 @@ function HeaderComponent({ isHiddenSearch = false, isHiddenCart = false }) {
                         <Loading isLoading={loading}>
                             {user.access_token ? (
                                 <>
-                                    <Popover placement="bottom" content={content} trigger="click">
+                                    <Popover placement="bottom" content={content}>
                                         <span className="infor-user">
                                             {userName.length > 0 ? userName : user.email}
                                         </span>

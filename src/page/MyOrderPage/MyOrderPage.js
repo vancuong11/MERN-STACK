@@ -1,12 +1,14 @@
 import { useSelector } from 'react-redux';
 import * as orderService from '../../services/orderService';
 import './MyOrderPage.scss';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import Loading from '../../components/LoadingComponent/Loading';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { convertPrice } from '../../utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useMutationHooks } from '../../hooks/useMutationHook';
+import * as message from '../../components/Message/Message';
 
 function MyOrderPage() {
     const location = useLocation();
@@ -34,6 +36,37 @@ function MyOrderPage() {
             },
         });
     };
+
+    const mutation = useMutationHooks(async (data) => {
+        const { id, access_token, orderItems } = data;
+        const res = await orderService.cancelOrderDetails(id, access_token, orderItems);
+        return res;
+    });
+
+    const handleCancelOrder = (order) => {
+        mutation.mutate(
+            { id: order._id, access_token: state?.access_token, orderItems: order.orderItems },
+            {
+                onSuccess: () => {
+                    queryOrder.refetch();
+                },
+            },
+        );
+    };
+    const {
+        isLoading: isLoadingCancel,
+        isSuccess: isSuccessCancel,
+        isError: isErrorCancel,
+        data: dataCancel,
+    } = mutation;
+
+    useEffect(() => {
+        if (isSuccessCancel && dataCancel?.status === 'OK') {
+            message.success('Hủy đơn hàng thành công');
+        } else if (isErrorCancel) {
+            message.error('Hủy đơn hàng thất bại');
+        }
+    }, [isErrorCancel, isSuccessCancel]);
 
     const renderProduct = (data) => {
         return data.map((order, index) => {
@@ -68,7 +101,7 @@ function MyOrderPage() {
         });
     };
     return (
-        <Loading isLoading={isLoading}>
+        <Loading isLoading={isLoading || isLoadingCancel}>
             <div className="order-page-container">
                 <div style={{ height: '100%', width: '1270px', margin: '0 auto' }}>
                     <h4>Đơn hàng của tôi</h4>
@@ -100,6 +133,7 @@ function MyOrderPage() {
                                         <div style={{ display: 'flex', gap: '10px' }}>
                                             <ButtonComponent
                                                 // onClick={() => handleAddCard()}
+                                                onClick={() => handleCancelOrder(order)}
                                                 size={40}
                                                 type="primary"
                                                 danger
