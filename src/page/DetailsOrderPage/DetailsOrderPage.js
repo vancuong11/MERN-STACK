@@ -82,9 +82,9 @@ function DetailsOrderPage() {
                             <div className="item-label">Số lượng</div>
                             <div className="item-label">Giảm giá</div>
                         </div>
-                        {data?.orderItems?.map((order) => {
+                        {data?.orderItems?.map((order, index) => {
                             return (
-                                <div className="product-details">
+                                <div className="product-details" key={index}>
                                     <div className="product-name-details">
                                         <img
                                             src={order?.image}

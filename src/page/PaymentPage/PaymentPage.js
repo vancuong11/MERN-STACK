@@ -14,6 +14,8 @@ import * as message from '../../components/Message/Message';
 import { updateUser } from '../../redux/slices/userSlide';
 import { useNavigate } from 'react-router-dom';
 import { removeAllOrderProduct } from '../../redux/slices/orderSlide';
+import { PayPalButton } from 'react-paypal-button-v2';
+import * as paymentService from '../../services/paymentService';
 
 function PaymentPage() {
     const order = useSelector((state) => state.order);
@@ -21,6 +23,7 @@ function PaymentPage() {
     const navigate = useNavigate();
     const [delivery, setDelivery] = useState('fast');
     const [payment, setPayment] = useState('later_money');
+    const [sdkReady, setSdkReady] = useState(false);
 
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
     const [stateUserDetails, setStateUserDetails] = useState({
@@ -183,6 +186,46 @@ function PaymentPage() {
     const handlePayment = (e) => {
         setPayment(e.target.value);
     };
+
+    // paypal
+    const addPaypalScript = async () => {
+        const { data } = await paymentService.getConfig();
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
+        script.async = true;
+        script.onload = () => {
+            setSdkReady(true);
+        };
+        document.body.appendChild(script);
+    };
+
+    useEffect(() => {
+        if (!window.paypal) {
+            addPaypalScript();
+        } else {
+            setSdkReady(true);
+        }
+    }, []);
+
+    const onSuccessPaypal = (details, data) => {
+        mutationAddOrder.mutate({
+            token: user?.access_token,
+            orderItems: order?.orderItemsSelected,
+            fullName: user?.name,
+            address: user?.address,
+            phone: user?.phone,
+            city: user?.city,
+            paymentMethods: payment,
+            itemsPrice: priceMemo,
+            shippingPrice: deliveryPriceMemo,
+            totalPrice: totalPriceMemo,
+            user: user?.id,
+            isPaid: true,
+            paidAt: details.update_time,
+        });
+    };
+
     return (
         <div className="payment-container">
             <Loading isLoading={isLoadingAddOrder}>
@@ -193,7 +236,7 @@ function PaymentPage() {
                             <div className="info">
                                 <div>
                                     <div className="label">Chọn phương thức giao hàng</div>
-                                    <div className="radio-payment" onChange={handleDelivery} value={delivery}>
+                                    <Radio.Group className="radio-payment" onChange={handleDelivery} value={delivery}>
                                         <Radio value="fast">
                                             <span style={{ color: '#ea8500', fontWeight: 'bold' }}>FAST</span> Giao hàng
                                             tiết kiệm
@@ -202,15 +245,16 @@ function PaymentPage() {
                                             <span style={{ color: '#ea8500', fontWeight: 'bold' }}>GO_JEK</span> Giao
                                             hàng tiết kiệm
                                         </Radio>
-                                    </div>
+                                    </Radio.Group>
                                 </div>
                             </div>
                             <div className="info">
                                 <div>
                                     <div className="label">Chọn phương thức thanh toán</div>
-                                    <div className="radio-payment" onChange={handlePayment} value={payment}>
+                                    <Radio.Group className="radio-payment" onChange={handlePayment} value={payment}>
                                         <Radio value="later_money"> Thanh toán tiền mặt khi nhận hàng</Radio>
-                                    </div>
+                                        <Radio value="paypal"> Thanh toán bằng Paypal</Radio>
+                                    </Radio.Group>
                                 </div>
                             </div>
                         </div>
@@ -282,16 +326,28 @@ function PaymentPage() {
                                         <span style={{ color: '#000', fontSize: '11px' }}>(Đã bao gồm VAT nếu có)</span>
                                     </span>
                                 </div>
-                                <div className="btn-submit">
-                                    <ButtonComponent
-                                        onClick={() => handleAddOrder()}
-                                        size={40}
-                                        className="btn-submit-product"
-                                        type="primary"
-                                        danger
-                                        textbutton={'Đặt hàng'}
-                                    ></ButtonComponent>
-                                </div>
+                                {payment === 'paypal' && sdkReady ? (
+                                    <div className="btn-submit">
+                                        <PayPalButton
+                                            amount={Math.round(totalPriceMemo / 30000)}
+                                            // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                                            onSuccess={onSuccessPaypal}
+                                            onError={() => {
+                                                alert('Error');
+                                            }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="btn-submit">
+                                        <ButtonComponent
+                                            onClick={() => handleAddOrder()}
+                                            className="btn-submit-product"
+                                            type="primary"
+                                            danger
+                                            textbutton={'Đặt hàng'}
+                                        ></ButtonComponent>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -27,7 +27,7 @@ import StepComponent from '../../components/Steps/StepComponent';
 
 function OrderPage() {
     const order = useSelector((state) => state.order);
-    console.log(order);
+
     const dispatch = useDispatch();
     const [listChecked, setListChecked] = useState([]);
     const user = useSelector((state) => state.user);
@@ -239,7 +239,6 @@ function OrderPage() {
                         </div>
                         <div className="list-order">
                             {order?.orderItems?.map((order, index) => {
-                                console.log(order);
                                 return (
                                     <div key={index}>
                                         <div className="item-order">
