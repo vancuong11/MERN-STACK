@@ -16,16 +16,16 @@ function CardComponent(props) {
         <>
             <Card
                 className="card-style"
-                onClick={() => item.countInStock !== 0 && handleDetailsProduct(item._id)}
+                onClick={() => handleDetailsProduct(item._id)}
                 hoverable
-                style={
-                    item.countInStock === 0
-                        ? { backgroundColor: '#ccc', cursor: 'not-allowed' }
-                        : { backgroundColor: '#fff', cursor: 'pointer' }
-                }
+                // style={
+                //     item.countInStock === 0
+                //         ? { backgroundColor: '#ccc', cursor: 'not-allowed' }
+                //         : { backgroundColor: '#fff', cursor: 'pointer' }
+                // }
                 bodyStyle={{ padding: '10px' }}
                 cover={<img alt="example" src={item.image} />}
-                disabled={item.countInStock === 0}
+                // disabled={item.countInStock === 0}
             >
                 <img src={logo} className="card-logo" />
                 <div className="content">

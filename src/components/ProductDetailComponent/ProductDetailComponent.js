@@ -11,27 +11,33 @@ import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { addOrderProduct } from '../../redux/slices/orderSlide';
+import { addOrderProduct, resetOrder } from '../../redux/slices/orderSlide';
 import { convertPrice } from '../../utils';
 import * as message from '../../components/Message/Message';
 
 function ProductDetailComponent(props) {
     const item = props.id;
     const user = useSelector((state) => state.user);
+    const order = useSelector((state) => state.order);
     const navigate = useNavigate();
     const location = useLocation();
     const [numProduct, setNumProduct] = useState(1);
+    const [errorLimitOrder, setErrorLimitOrder] = useState(false);
     const dispatch = useDispatch();
 
     const onChange = (value) => {
         setNumProduct(Number(value));
     };
 
-    const handleChangeCount = (type, e) => {
+    const handleChangeCount = (type, limited) => {
         if (type === 'increase') {
-            setNumProduct(numProduct + 1);
+            if (!limited) {
+                setNumProduct(numProduct + 1);
+            }
         } else {
-            setNumProduct(numProduct - 1);
+            if (!limited) {
+                setNumProduct(numProduct - 1);
+            }
         }
     };
 
@@ -55,6 +61,28 @@ function ProductDetailComponent(props) {
             duration: 3,
         });
     };
+
+    useEffect(() => {
+        const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
+        if (
+            orderRedux?.amount + numProduct <= orderRedux?.countInStock ||
+            (!orderRedux && productDetails?.countInStock > 0)
+        ) {
+            setErrorLimitOrder(false);
+        } else if (productDetails?.countInStock === 0) {
+            setErrorLimitOrder(true);
+        }
+    }, [numProduct]);
+
+    useEffect(() => {
+        if (order.isSuccessOrder) {
+            message.success('Đã thêm vào giỏ hàng');
+        }
+        return () => {
+            dispatch(resetOrder());
+        };
+    }, [order.isSuccessOrder]);
+
     const handleAddOrderProduct = () => {
         if (!user.isAdmin) {
             openNotification();
@@ -62,23 +90,30 @@ function ProductDetailComponent(props) {
                 navigate('/sign-in', { state: location.pathname });
             }, 3000);
         } else {
-            message.success('Product had added to cart!');
-            dispatch(
-                addOrderProduct({
-                    orderItem: {
-                        name: productDetails?.name,
-                        amount: numProduct,
-                        image: productDetails?.image,
-                        price: productDetails?.price,
-                        discount: productDetails?.price * Number(productDetails?.discount / 100),
-                        product: productDetails?._id,
-                        countInStock: productDetails?.countInStock,
-                    },
-                }),
-            );
+            const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
+            console.log(orderRedux);
+            if (
+                orderRedux?.amount + numProduct <= orderRedux?.countInStock ||
+                (!orderRedux && productDetails?.countInStock > 0)
+            ) {
+                dispatch(
+                    addOrderProduct({
+                        orderItem: {
+                            name: productDetails?.name,
+                            amount: numProduct,
+                            image: productDetails?.image,
+                            price: productDetails?.price,
+                            discount: productDetails?.price * Number(productDetails?.discount / 100),
+                            product: productDetails?._id,
+                            countInStock: productDetails?.countInStock,
+                        },
+                    }),
+                );
+            } else {
+                setErrorLimitOrder(true);
+            }
         }
     };
-
     return (
         <Loading isLoading={isLoading}>
             <div className="container-product-detail-component">
@@ -151,7 +186,7 @@ function ProductDetailComponent(props) {
                                     defaultValue={productDetails?.rating}
                                 />
 
-                                <span className="sell">| Đã bán 29</span>
+                                <span className="sell">| Đã bán {productDetails?.sell ? productDetails.sell : 0}</span>
                             </div>
                             <div className="price">
                                 <div className="price-text">{convertPrice(productDetails?.price)}</div>
@@ -165,10 +200,9 @@ function ProductDetailComponent(props) {
                                 <p>Số lượng</p>
                                 <div>
                                     <ButtonComponent
-                                        disabled={numProduct <= 1 ? true : false}
                                         icon={<MinusOutlined />}
                                         size="small"
-                                        onClick={() => handleChangeCount('decrease')}
+                                        onClick={() => handleChangeCount('decrease', numProduct === 1)}
                                     />
                                     <InputNumber
                                         onChange={onChange}
@@ -176,26 +210,31 @@ function ProductDetailComponent(props) {
                                         defaultValue={1}
                                         value={numProduct}
                                         size="small"
-                                        max={10}
+                                        max={productDetails?.countInStock}
                                     />
                                     <ButtonComponent
-                                        disabled={numProduct >= 10 ? true : false}
                                         icon={<PlusOutlined />}
                                         size="small"
-                                        onClick={() => handleChangeCount('increase')}
+                                        onClick={() =>
+                                            handleChangeCount('increase', numProduct === productDetails?.countInStock)
+                                        }
                                     />
                                 </div>
                             </div>
 
                             <div className="group-button">
-                                <ButtonComponent
-                                    onClick={handleAddOrderProduct}
-                                    className="btn-submit-product"
-                                    type="primary"
-                                    danger
-                                    textbutton="Chọn mua"
-                                />
-
+                                <div>
+                                    <ButtonComponent
+                                        onClick={handleAddOrderProduct}
+                                        className="btn-submit-product"
+                                        type="primary"
+                                        danger
+                                        textbutton="Chọn mua"
+                                    />
+                                    {errorLimitOrder && productDetails.countInStock === 0 && (
+                                        <span style={{ color: 'red' }}>Sản phẩm hết hàng</span>
+                                    )}
+                                </div>
                                 <ButtonComponent
                                     type="primary"
                                     className="btn-pay-later-product"
