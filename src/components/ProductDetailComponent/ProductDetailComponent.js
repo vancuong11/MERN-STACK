@@ -12,8 +12,10 @@ import Loading from '../LoadingComponent/Loading';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { addOrderProduct, resetOrder } from '../../redux/slices/orderSlide';
-import { convertPrice } from '../../utils';
+import { convertPrice, initFacebookSDK } from '../../utils';
 import * as message from '../../components/Message/Message';
+import LikeButtonComponent from '../LikeButtonComponent/LikeButtonComponent';
+import CommentComponent from '../CommentComponent/CommentComponent';
 
 function ProductDetailComponent(props) {
     const item = props.id;
@@ -91,7 +93,7 @@ function ProductDetailComponent(props) {
             }, 3000);
         } else {
             const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
-            console.log(orderRedux);
+
             if (
                 orderRedux?.amount + numProduct <= orderRedux?.countInStock ||
                 (!orderRedux && productDetails?.countInStock > 0)
@@ -114,6 +116,11 @@ function ProductDetailComponent(props) {
             }
         }
     };
+
+    useEffect(() => {
+        initFacebookSDK();
+    }, []);
+
     return (
         <Loading isLoading={isLoading}>
             <div className="container-product-detail-component">
@@ -196,6 +203,9 @@ function ProductDetailComponent(props) {
                                     <span className="change-address"> Đổi địa chỉ</span>
                                 </div>
                             </div>
+                            <div className="like-share">
+                                <LikeButtonComponent dataHref={'https://developers.facebook.com/docs/plugins/'} />
+                            </div>
                             <div className="quality">
                                 <p>Số lượng</p>
                                 <div>
@@ -243,6 +253,10 @@ function ProductDetailComponent(props) {
                             </div>
                         </div>
                     </Col>
+                    <CommentComponent
+                        dataHref={'https://developers.facebook.com/docs/plugins/comments#configurator'}
+                        width="1250"
+                    />
                 </Row>
             </div>
             {contextHolder}
