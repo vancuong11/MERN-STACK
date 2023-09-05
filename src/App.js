@@ -30,9 +30,9 @@ function App() {
     }, []);
 
     const handleDecode = () => {
-        let storageData = localStorage.getItem('access_token');
+        let storageData = user?.access_token || localStorage.getItem('access_token');
         let decoded = {};
-        if (storageData && isJsonString(storageData)) {
+        if (storageData && isJsonString(storageData) && !user?.access_token) {
             storageData = JSON.parse(storageData);
             decoded = jwt_decode(storageData);
         }
@@ -68,7 +68,6 @@ function App() {
         const refresh_token = JSON.parse(storageRefreshToken);
         const res = await userService.getDetailsUser(id, token);
         dispatch(updateUser({ ...res.data, access_token: token, refresh_token: refresh_token }));
-        setIsLoading(false);
     };
 
     const fetchApi = async () => {
