@@ -223,6 +223,7 @@ function PaymentPage() {
             user: user?.id,
             isPaid: true,
             paidAt: details.update_time,
+            email: user?.email,
         });
     };
 

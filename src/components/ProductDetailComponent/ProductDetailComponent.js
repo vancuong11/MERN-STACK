@@ -31,6 +31,31 @@ function ProductDetailComponent(props) {
         setNumProduct(Number(value));
     };
 
+    useEffect(() => {
+        initFacebookSDK();
+    }, []);
+
+    useEffect(() => {
+        const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
+        if (
+            orderRedux?.amount + numProduct <= orderRedux?.countInStock ||
+            (!orderRedux && productDetails?.countInStock > 0)
+        ) {
+            setErrorLimitOrder(false);
+        } else if (productDetails?.countInStock === 0) {
+            setErrorLimitOrder(true);
+        }
+    }, [numProduct]);
+
+    useEffect(() => {
+        if (order?.isSuccessOrder) {
+            message.success('Đã thêm vào giỏ hàng');
+        }
+        return () => {
+            dispatch(resetOrder());
+        };
+    }, [order.isSuccessOrder]);
+
     const handleChangeCount = (type, limited) => {
         if (type === 'increase') {
             if (!limited) {
@@ -64,27 +89,6 @@ function ProductDetailComponent(props) {
         });
     };
 
-    useEffect(() => {
-        const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id);
-        if (
-            orderRedux?.amount + numProduct <= orderRedux?.countInStock ||
-            (!orderRedux && productDetails?.countInStock > 0)
-        ) {
-            setErrorLimitOrder(false);
-        } else if (productDetails?.countInStock === 0) {
-            setErrorLimitOrder(true);
-        }
-    }, [numProduct]);
-
-    useEffect(() => {
-        if (order.isSuccessOrder) {
-            message.success('Đã thêm vào giỏ hàng');
-        }
-        return () => {
-            dispatch(resetOrder());
-        };
-    }, [order.isSuccessOrder]);
-
     const handleAddOrderProduct = () => {
         if (!user.isAdmin) {
             openNotification();
@@ -116,10 +120,6 @@ function ProductDetailComponent(props) {
             }
         }
     };
-
-    useEffect(() => {
-        initFacebookSDK();
-    }, []);
 
     return (
         <Loading isLoading={isLoading}>

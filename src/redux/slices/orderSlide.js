@@ -25,9 +25,9 @@ export const orderSlide = createSlice({
             const { orderItem } = action.payload;
             const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem.product);
             if (itemOrder) {
-                if (itemOrder.amount <= itemOrder.countInStock) {
-                    itemOrder.amount += orderItem?.amount;
+                if (itemOrder.amount <= itemOrder?.countInStock) {
                     state.isSuccessOrder = true;
+                    itemOrder.amount += orderItem?.amount;
                 }
             } else {
                 state.orderItems.push(orderItem);
