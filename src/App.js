@@ -78,27 +78,27 @@ function App() {
 
     return (
         <>
-            {/* <Loading isLoading={isLoading}> */}
-            <Router>
-                <Routes>
-                    {routes.map((route) => {
-                        const Page = route.page;
-                        const Layout = route.isShowHeader ? DefaultComponent : Fragment;
-                        return (
-                            <Route
-                                key={route.path}
-                                path={route.path}
-                                element={
-                                    <Layout>
-                                        <Page />
-                                    </Layout>
-                                }
-                            ></Route>
-                        );
-                    })}
-                </Routes>
-            </Router>
-            {/* </Loading> */}
+            <Loading isLoading={isLoading}>
+                <Router>
+                    <Routes>
+                        {routes.map((route) => {
+                            const Page = route.page;
+                            const Layout = route.isShowHeader ? DefaultComponent : Fragment;
+                            return (
+                                <Route
+                                    key={route.path}
+                                    path={route.path}
+                                    element={
+                                        <Layout>
+                                            <Page />
+                                        </Layout>
+                                    }
+                                ></Route>
+                            );
+                        })}
+                    </Routes>
+                </Router>
+            </Loading>
         </>
     );
 }
